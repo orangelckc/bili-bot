@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "bili-bot",
-    "version": "0.0.0"
+    "version": "../package.json"
   },
   "tauri": {
     "allowlist": {
@@ -33,7 +33,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "bili-bot",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -65,6 +65,11 @@
         "title": "哔哩哔哩直播助手",
         "width": 800
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "assets/tray.png",
+      "iconAsTemplate": true,
+      "menuOnLeftClick": false
+    }
   }
 }
