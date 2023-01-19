@@ -18,6 +18,7 @@
     "qrcode": "^1.5.1",
     "qs": "^6.11.0",
     "quasar": "^2.11.5",
+    "tauri-plugin-sqlite-api": "github:lzdyes/tauri-plugin-sqlite#v0.1.1",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "unocss": "^0.48.4",
     "vue": "^3.2.45"

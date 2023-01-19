@@ -12,10 +12,16 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
+      "all": true,
+      "fs": {
+        "scope": [
+          "*"
+        ]
+      },
+      "protocol": {
+        "assetScope": [
+          "*"
+        ]
       },
       "http": {
         "request": true,

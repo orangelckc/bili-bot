@@ -1,9 +1,9 @@
 import { Store } from "tauri-plugin-store-api";
-import { STORE_DEFAULT_VALUES } from "@/constants";
+import { STORE_DEFAULT_VALUES, STORE_DEFAULT_PATH } from "@/constants";
 
 // 创建配置文件
 const configFile = import.meta.env.DEV ? ".config.dev.dat" : ".config.dat";
-const store = new Store(configFile);
+const store = new Store(`${STORE_DEFAULT_PATH}/${configFile}`);
 
 // 初始化配置
 const initStore = async () => {

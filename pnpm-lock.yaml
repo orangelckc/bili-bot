@@ -18,6 +18,7 @@ specifiers:
   qs: ^6.11.0
   quasar: ^2.11.5
   sass: ^1.57.1
+  tauri-plugin-sqlite-api: github:lzdyes/tauri-plugin-sqlite#v0.1.1
   tauri-plugin-store-api: github:tauri-apps/tauri-plugin-store
   typescript: ^4.6.4
   unocss: ^0.48.4
@@ -33,6 +34,7 @@ dependencies:
   qrcode: 1.5.1
   qs: 6.11.0
   quasar: 2.11.5
+  tauri-plugin-sqlite-api: github.com/lzdyes/tauri-plugin-sqlite/3d09a5a963f96a06debe27b3e37d9337aca18dcc
   tauri-plugin-store-api: github.com/tauri-apps/tauri-plugin-store/c71665bf5dcf48ae70a88d622eb38b2548b60a5d
   unocss: 0.48.4_vite@4.0.4
   vue: 3.2.45
@@ -376,6 +378,13 @@ packages:
       '@types/estree': 1.0.0
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    dev: false
+
+  /@tauri-apps/api/1.0.0-rc.4:
+    resolution: {integrity: sha512-1HaUsx8+TzFHDoQ+Mmd6RWaMsPyZlurQHgACDt+il5e/ui6pDkumVXaS92SnY5XOcS4gBC0BkgjVfkWgcm/Oww==}
+    engines: {node: '>= 12.13.0', npm: '>= 6.6.0', yarn: '>= 1.19.1'}
+    dependencies:
+      type-fest: 2.12.2
     dev: false
 
   /@tauri-apps/api/1.2.0:
@@ -1497,6 +1506,15 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
+  /tslib/2.4.1:
+    resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
+    dev: false
+
+  /type-fest/2.12.2:
+    resolution: {integrity: sha512-qt6ylCGpLjZ7AaODxbpyBZSs9fCI9SkL3Z9q2oxMBQhs/uyY+VD8jHA8ULCGmWQJlBgqvO3EJeAngOHD8zQCrQ==}
+    engines: {node: '>=12.20'}
+    dev: false
+
   /typescript/4.9.4:
     resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
     engines: {node: '>=4.2.0'}
@@ -1665,6 +1683,15 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  github.com/lzdyes/tauri-plugin-sqlite/3d09a5a963f96a06debe27b3e37d9337aca18dcc:
+    resolution: {tarball: https://codeload.github.com/lzdyes/tauri-plugin-sqlite/tar.gz/3d09a5a963f96a06debe27b3e37d9337aca18dcc}
+    name: tauri-plugin-sqlite-api
+    version: 0.1.1
+    dependencies:
+      '@tauri-apps/api': 1.0.0-rc.4
+      tslib: 2.4.1
+    dev: false
 
   github.com/tauri-apps/tauri-plugin-store/c71665bf5dcf48ae70a88d622eb38b2548b60a5d:
     resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/c71665bf5dcf48ae70a88d622eb38b2548b60a5d}
