@@ -1,8 +1,9 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import UnoCSS from 'unocss/vite'
+import { presetUno } from 'unocss'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
-
+import presetIcons from '@unocss/preset-icons'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,7 +13,12 @@ export default defineConfig({
         template: { transformAssetUrls }
       }
     ),
-    UnoCSS({ /* options */ }),
+    UnoCSS({
+      presets: [
+        presetIcons(),
+        presetUno(),
+      ],
+    }),
     quasar()
   ],
 

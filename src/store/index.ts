@@ -14,7 +14,6 @@ const initStore = async () => {
       const setValue = (await getStore(key)) || STORE_DEFAULT_VALUES[key];
       await setStore(key, setValue);
     }
-    console.log('store', store)
     await saveStore();
   } catch (error) {
     for (const key of Object.keys(STORE_DEFAULT_VALUES)) {
