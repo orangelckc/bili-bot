@@ -15,6 +15,8 @@ watch(props, () => {
   getEmojiList();
 });
 
+const popupRef = ref()
+
 // 表情包列表
 const emojiList = ref<any[]>([]);
 // 输入框内容
@@ -46,6 +48,7 @@ const sendMessage = async (value?: string) => {
   if (!result || value) return;
 
   inputValue.value = "";
+  popupRef.value.hide();
 };
 
 </script>
@@ -55,9 +58,10 @@ const sendMessage = async (value?: string) => {
     v-model="inputValue" class="w-full" :disable="!connected">
     <template v-slot:append>
       <q-icon name="event" class="i-carbon-face-activated">
-        <q-popup-proxy class="w-250px h-200px">
+        <q-popup-proxy class="w-280px h-200px" ref="popupRef">
           <q-tabs v-model="activeTab" class="text-grey" active-color="primary" indicator-color="primary" align="justify"
-            narrow-indicator>
+            narrow-indicator left-icon="img:https://api.iconify.design/carbon:chevron-left.svg"
+            right-icon="img:https://api.iconify.design/carbon:chevron-right.svg">
             <q-tab v-for="item in emojiList" :name="item.pkg_name" :label="item.pkg_name" :key="item.pkg_id" />
           </q-tabs>
 
@@ -65,9 +69,9 @@ const sendMessage = async (value?: string) => {
 
           <q-tab-panels v-model="activeTab" animated>
             <q-tab-panel v-for="item in emojiList" :name="item.pkg_name" :key="item.pkg_id">
-              <div class="flex justify-between">
+              <div class="flex flex-wrap gap-1">
                 <q-img v-for="emoji in item.emoticons" :key="emoji.emoticon_id" :src="emoji.url" :alt="emoji.emoji"
-                  class="max-w-1/3 cursor-pointer" @click="sendMessage(emoji.emoticon_unique)" />
+                  class="flex-1/4 cursor-pointer h-60px" fit="scale-down" @click="sendMessage(emoji.emoticon_unique)" />
               </div>
             </q-tab-panel>
           </q-tab-panels>

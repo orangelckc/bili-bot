@@ -10,7 +10,7 @@ import { create_entry_sql, create_danmu_sql, create_gift_sql, sign_sql, formatUn
 import { reactive, ref, watch } from "vue";
 import { Notify } from "quasar";
 
-export const roomid = ref("23335326");
+export const roomid = ref("3796382");
 export const robotName = ref("闹闹");
 export const hostName = ref("条条");
 export const connected = ref(false);
@@ -18,7 +18,7 @@ export const active = ref(false);
 export const msgList = ref<Record<string, any>>([]);
 export const triggerOptions = reactive({
   like: true,
-  follow: false,
+  follow: true,
   gift: true,
   welcome: true
 });
@@ -267,6 +267,10 @@ export const startWebsocket = async () => {
   if (isNaN(Number(roomid.value))) {
     Notify.create("请输入正确的直播间号");
     roomid.value = "";
+    return;
+  }
+  if (!hostName.value || !robotName.value) {
+    Notify.create("请输入主播名称和机器人名称");
     return;
   }
   connected.value = true;
