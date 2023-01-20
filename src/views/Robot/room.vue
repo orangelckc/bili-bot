@@ -85,7 +85,7 @@ const roomLink = computed(() =>
 
     <q-card class="my-2">
       <q-card-section class="flex items-center h-[450px] gap-2">
-        <div class="max-w-3/5 flex-grow">
+        <div class="max-w-3/5 flex-grow ">
           <Video :url="url" v-show="url.length" />
         </div>
         <div class="flex-grow max-w-2/5">

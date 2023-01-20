@@ -88,8 +88,8 @@ watch(props, async () => {
 </script>
 
 <template>
-  <div class="flex h-full items-center justify-center bg-black/30 " @wheel="changeVolume">
-    <video ref="videoElement" :volume="volume" class="h-full w-full " controls />
+  <div class="flex h-full items-center justify-center bg-black/30" @wheel="changeVolume">
+    <video ref="videoElement" :volume="volume" class="max-h-300px w-full " controls />
     <div class="flex justify-around">
       <div :class="audioMode ? 'i-carbon-video-filled' : 'i-carbon-headphones'"
         class="text-5xl text-white  hover:text-red-100 hover:text-6xl hover:cursor-pointer" @click="switchAudioMode" />

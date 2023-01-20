@@ -55,9 +55,9 @@ const sendMessage = async (value?: string) => {
     v-model="inputValue" class="w-full" :disable="!connected">
     <template v-slot:append>
       <q-icon name="event" class="i-carbon-face-activated">
-        <q-popup-proxy>
-          <q-tabs v-model="activeTab" dense class="text-grey" active-color="primary" indicator-color="primary"
-            align="justify" narrow-indicator>
+        <q-popup-proxy class="w-250px h-200px">
+          <q-tabs v-model="activeTab" class="text-grey" active-color="primary" indicator-color="primary" align="justify"
+            narrow-indicator>
             <q-tab v-for="item in emojiList" :name="item.pkg_name" :label="item.pkg_name" :key="item.pkg_id" />
           </q-tabs>
 
