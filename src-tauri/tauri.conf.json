@@ -1,7 +1,7 @@
 {
   "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": false
@@ -11,16 +11,12 @@
     "version": "../package.json"
   },
   "tauri": {
+    "macOSPrivateApi": true,
     "allowlist": {
       "all": true,
       "fs": {
         "scope": [
-          "*"
-        ]
-      },
-      "protocol": {
-        "assetScope": [
-          "*"
+          "**"
         ]
       },
       "http": {
@@ -50,7 +46,7 @@
       "longDescription": "",
       "macOS": {
         "entitlements": null,
-        "exceptionDomain": "",
+        "exceptionDomain": "hdslb.com",
         "frameworks": [],
         "providerShortName": null,
         "signingIdentity": null
@@ -61,7 +57,10 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "wix": {
+          "language": "zh-CN"
+        }
       }
     },
     "security": {
@@ -73,10 +72,11 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 800,
         "resizable": false,
         "title": "哔哩哔哩直播助手",
-        "width": 800
+        "width": 800,
+        "decorations": false
       }
     ],
     "systemTray": {

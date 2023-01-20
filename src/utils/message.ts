@@ -123,7 +123,6 @@ const handleMessage = async (messages: any[]) => {
 
   const parseInteract = (data: any) => {
     const id = nanoid();
-
     let info: any;
     switch (data.msg_type) {
       case 1:
