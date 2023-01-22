@@ -88,7 +88,7 @@ const sendMessage = (value: string) => {
     roomid: roomid.value
   };
   console.log(params.msg);
-  // sendMessageApi({ ...params, isInitiative: true });
+  sendMessageApi({ ...params, isInitiative: true });
 };
 
 // 进入人数每超过100，欢迎信息

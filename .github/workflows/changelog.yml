@@ -1,0 +1,32 @@
+# .github/workflows/release.yml
+
+name: Release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # 安装 Node.js
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      # 发布 Release，使用自定义名称
+      - name: Generate changelog
+        id: create_release
+        run: npx changelogithub --draft --name 哔哩哔哩-直播助手${{ steps.get_version.outputs.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
