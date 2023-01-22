@@ -85,18 +85,18 @@ const sign_sql = async (data: any) => {
   const uid_sign_sql = `SELECT time FROM signs WHERE roomid='${roomid}' AND uid = '${uid}' ORDER BY time DESC;`;
   const list = await db.select<Array<{ time: string }>>(uid_sign_sql);
   // 算法核心：判断逆序排序的相邻时间相差是否>1天
-  const seqCount = list.reduce((pre: any, cur) => {
-    let count = 0;
-    const curStart = dayjs(cur.time).startOf("date").valueOf();
+  let seqCount = 0;
+  list.reduce((pre: any, cur, index, arr) => {
     const preStart = dayjs(pre.time).startOf("date").valueOf();
+    const curStart = dayjs(cur.time).startOf("date").valueOf();
     const diff = dayjs(preStart).diff(dayjs(curStart), "day");
     if (diff === 1) {
-      count += 1;
+      seqCount += 1;
     } else if (diff > 1) {
-      return count;
+      arr.splice(index);
     }
 
-    return count;
+    return cur;
   }, Date.now());
 
   // 本月打卡次数
