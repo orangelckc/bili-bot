@@ -12,5 +12,5 @@ fn main() {
         .on_system_tray_event(tray::handler)
         .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("Tauri程序运行失败");
 }

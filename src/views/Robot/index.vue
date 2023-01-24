@@ -5,6 +5,7 @@ import { LOGIN_INFO } from "@/constants";
 import { clearInfo } from '@/utils/auth';
 import { getUserInfoApi } from '@/api';
 import useWebsocket from "@/hooks/useWebsocket";
+import { appWindow } from '@tauri-apps/api/window';
 
 import Room from "./room.vue";
 import { initSQL } from '@/utils/initSQL';
@@ -32,6 +33,10 @@ const logout = () => {
   window.location.reload();
 };
 
+const exit = async () => {
+  await appWindow.hide();
+};
+
 onMounted(() => {
   getUserInfo();
   useWebsocket().trigger();
@@ -53,6 +58,9 @@ onMounted(() => {
         </q-toolbar-title>
         <q-btn flat round dense @click="logout" size="lg">
           <div class="i-carbon-logout"></div>
+        </q-btn>
+        <q-btn flat round dense @click="exit" size="lg">
+          <div class="i-carbon-close-filled"></div>
         </q-btn>
       </q-toolbar>
     </q-header>
