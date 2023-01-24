@@ -5,6 +5,9 @@
 
 mod tray;
 fn main() {
+    #[cfg(target_os = "macos")]
+    fix_path_env::fix().expect("修复macOS环境变量失败");
+
     tauri::Builder::default()
         .setup(|app| {
             #[cfg(target_os = "macos")] //✅ `macOS`下不显示docker图标

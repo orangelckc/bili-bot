@@ -19,6 +19,9 @@ serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2.4", features = ["api-all", "macos-private-api", "system-tray"] }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "dev" }
 
+[dependencies.fix-path-env]
+git = "https://github.com/tauri-apps/fix-path-env-rs"
+
 [dependencies.tauri-plugin-sqlite]
 git = "https://github.com/lzdyes/tauri-plugin-sqlite"
 tag = "v0.1.1"
