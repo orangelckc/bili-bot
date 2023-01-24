@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import flvjs from "flv.js";
-import { getLiveStreamUrlApi } from "@/api";
 import { reactive, ref, watch } from "vue";
 
 const props = defineProps<{
@@ -39,8 +38,8 @@ const initPlayer = () => {
       {
         enableWorker: false, // 不启用拆散线程
         enableStashBuffer: false, // 敞开IO暗藏缓冲区
-        reuseRedirectedURL: true, // 重用301/302重定向url，用于随后的申请，如查找、从新连贯等。
-        autoCleanupSourceBuffer: true // 主动革除缓存
+        reuseRedirectedURL: true, // 重用301/302重定向url，用于随后的申请，如查找、重新连接等。
+        autoCleanupSourceBuffer: false // 主动清除缓存
       }
     );
     flvPlayer.attachMediaElement(videoElement.value);
@@ -58,7 +57,7 @@ const initPlayer = () => {
     });
 
     flvPlayer.on(flvjs.Events.MEDIA_INFO, (data: any) => {
-      console.log("MEDIA_INFO", data);
+      console.log("获取到媒体信息", data);
     });
 
   }
@@ -77,11 +76,12 @@ const destroyPlayer = () => {
     flvPlayer.unload();
     flvPlayer.detachMediaElement();
     flvPlayer.destroy();
-    flvPlayer = null;
+    flvPlayer = {};
   }
 };
 
 watch(props, async () => {
+  Object.keys(flvPlayer).length && destroyPlayer();
   initPlayer();
 });
 
