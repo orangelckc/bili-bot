@@ -3,11 +3,13 @@ import { connected, startWebsocket, stopWebsocket, active, msgList, manage } fro
 import { ROOM_URL_PREFIX } from "@/constants";
 import { computed, ref, watch } from "vue";
 import { getLiveStreamUrlApi } from "@/api";
+import { startRecord, stopRecord, testFfmpge } from '@/utils/cmd'
 
 import sendMessages from "./message/index.vue";
 import Video from "./video.vue";
 
 const url = ref("");
+const isRecording = ref(false)
 
 const openPreview = async () => {
   const res = await getLiveStreamUrlApi("10000", manage.roomid);
@@ -38,6 +40,20 @@ const scrollControl = (event: WheelEvent) => {
 const roomLink = computed(() =>
   `${ROOM_URL_PREFIX}/${manage.roomid}`);
 
+const onRecord = async () => {
+  if (isRecording.value) {
+    stopRecord()
+    isRecording.value = false
+    return
+  }
+  const res = await getLiveStreamUrlApi("10000", manage.roomid);
+  if (!res) return;
+  const flag = await testFfmpge()
+  if (!flag) return
+  startRecord(res.durl[0].url, manage.roomid)
+  isRecording.value = true
+}
+
 </script>
 
 <template>
@@ -59,6 +75,9 @@ const roomLink = computed(() =>
             <q-checkbox v-model="manage.welcome" label="欢迎词" />
             <q-toggle v-model="active" size="md" :disable="!connected">
               <div class="i-carbon-machine-learning text-2xl font-bold" :class="active ? 'text-green' : 'text-gray'" />
+              <q-tooltip v-if="active">
+                开启机器人
+              </q-tooltip>
             </q-toggle>
           </div>
         </div>
@@ -69,7 +88,7 @@ const roomLink = computed(() =>
           <q-input outlined v-model="manage.hostName" label="主播名称" :disable="connected" />
           <q-input outlined v-model="manage.robotName" label="机器人名称" :disable="connected" />
         </div>
-        <div class="flex gap-2 m-3">
+        <div class="flex gap-2 m-3 items-center">
           <q-btn @click="openPreview">
             直播预览
           </q-btn>
@@ -79,6 +98,15 @@ const roomLink = computed(() =>
           <q-btn @click="stopWebsocket" :disable="!connected">
             停止链接
           </q-btn>
+          <div>
+            <q-icon :class="isRecording ? 'i-carbon-stop-filled text-red' : 'i-carbon-play-filled text-blue'"
+              class="justify-start hover:cursor-pointer" @click="onRecord" size="md">
+              <q-tooltip>
+                点击开始录制
+              </q-tooltip>
+            </q-icon>
+            <span class="text-red  font-bold" v-if="isRecording"> 正在录制中... </span>
+          </div>
         </div>
       </q-card-section>
     </q-card>

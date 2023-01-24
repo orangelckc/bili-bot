@@ -21,3 +21,6 @@ npm run tauri build
 ```bash
 npm run build:icon
 ```
+
+## 直播录制功能
+如果需要使用直播录制功能，请自行安装ffmpeg，参考[ffmpeg官网](https://ffmpeg.org/download.html)

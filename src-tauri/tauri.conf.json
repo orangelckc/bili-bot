@@ -25,6 +25,21 @@
           "https://**",
           "http://**"
         ]
+      },
+      "shell": {
+        "execute": true,
+        "scope": [
+          {
+            "name": "record-live",
+            "cmd": "ffmpeg",
+            "args": true
+          },
+          {
+            "name": "ffmpeg-version",
+            "cmd": "ffmpeg",
+            "args": true
+          }
+        ]
       }
     },
     "bundle": {

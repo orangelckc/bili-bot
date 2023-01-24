@@ -24,7 +24,7 @@ const changeVolume = (event: WheelEvent) => {
   }
 };
 
-const videoElement = ref();
+const videoRef = ref();
 
 const initPlayer = () => {
   if (flvjs.isSupported()) {
@@ -39,10 +39,10 @@ const initPlayer = () => {
         enableWorker: false, // 不启用拆散线程
         enableStashBuffer: false, // 敞开IO暗藏缓冲区
         reuseRedirectedURL: true, // 重用301/302重定向url，用于随后的申请，如查找、重新连接等。
-        autoCleanupSourceBuffer: false // 主动清除缓存
+        autoCleanupSourceBuffer: true // 主动清除缓存
       }
     );
-    flvPlayer.attachMediaElement(videoElement.value);
+    flvPlayer.attachMediaElement(videoRef.value);
     flvPlayer.load();
     flvPlayer.play();
 
@@ -89,10 +89,10 @@ watch(props, async () => {
 
 <template>
   <div class="flex h-full items-center justify-center bg-black/30" @wheel="changeVolume">
-    <video ref="videoElement" :volume="volume" class="max-h-300px w-full " controls />
-    <div class="flex justify-around">
+    <video ref="videoRef" :volume="volume" class="max-h-300px w-full " controls />
+    <div class="flex justify-around items-center gap-4">
       <div :class="audioMode ? 'i-carbon-video-filled' : 'i-carbon-headphones'"
-        class="text-5xl text-white  hover:text-red-100 hover:text-6xl hover:cursor-pointer" @click="switchAudioMode" />
+        class="text-5xl text-white hover:cursor-pointer" @click="switchAudioMode" />
     </div>
   </div>
 </template>
