@@ -63,7 +63,6 @@ const verifyQrCode = async (oauthKey: string) => {
       qrCodeStatus.value = 3;
 
       saveLoginInfo(result.url);
-      window.location.reload();
       break;
   }
 };
@@ -76,6 +75,7 @@ const saveLoginInfo = async (data: string) => {
   await setStore(LOGIN_INFO.cookie, `SESSDATA=${SESSDATA}`);
   await setStore(LOGIN_INFO.csrf, bili_jct!.toString());
 
+  window.location.reload();
 };
 
 onMounted(getQRCode);
