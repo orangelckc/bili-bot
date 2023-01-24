@@ -6,6 +6,11 @@
 mod tray;
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(target_os = "macos")] //✅ `macOS`下不显示docker图标
+            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+            Ok(())
+        })
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_sqlite::init())
         .system_tray(tray::main_menu())
