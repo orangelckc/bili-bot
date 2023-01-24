@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { roomid, connected, startWebsocket, stopWebsocket, active, msgList, hostName, robotName, triggerOptions } from "./message/robot";
-import { ROOM_URL_PREFIX } from "@/constants/url";
+import { connected, startWebsocket, stopWebsocket, active, msgList, manage } from "./message/robot";
+import { ROOM_URL_PREFIX } from "@/constants";
 import { computed, ref, watch } from "vue";
 import { getLiveStreamUrlApi } from "@/api";
 
@@ -10,7 +10,7 @@ import Video from "./video.vue";
 const url = ref("");
 
 const openPreview = async () => {
-  const res = await getLiveStreamUrlApi("10000", roomid.value);
+  const res = await getLiveStreamUrlApi("10000", manage.roomid);
   if (!res) return;
   url.value = res.durl[0].url;
 };
@@ -36,7 +36,7 @@ const scrollControl = (event: WheelEvent) => {
 }
 
 const roomLink = computed(() =>
-  `${ROOM_URL_PREFIX}/${roomid.value}`);
+  `${ROOM_URL_PREFIX}/${manage.roomid}`);
 
 </script>
 
@@ -53,10 +53,10 @@ const roomLink = computed(() =>
         </div>
         <div>
           <div class="flex">
-            <q-checkbox v-model="triggerOptions.like" label="点赞" />
-            <q-checkbox v-model="triggerOptions.follow" label="关注" />
-            <q-checkbox v-model="triggerOptions.gift" label="礼物" />
-            <q-checkbox v-model="triggerOptions.welcome" label="欢迎词" />
+            <q-checkbox v-model="manage.like" label="点赞" />
+            <q-checkbox v-model="manage.follow" label="关注" />
+            <q-checkbox v-model="manage.gift" label="礼物" />
+            <q-checkbox v-model="manage.welcome" label="欢迎词" />
             <q-toggle v-model="active" size="md" :disable="!connected">
               <div class="i-carbon-machine-learning text-2xl font-bold" :class="active ? 'text-green' : 'text-gray'" />
             </q-toggle>
@@ -65,9 +65,9 @@ const roomLink = computed(() =>
       </q-card-section>
       <q-card-section>
         <div class="flex justify-around gap-2 w-full">
-          <q-input outlined v-model="roomid" label="直播间id" :disable="connected" />
-          <q-input outlined v-model="hostName" label="主播名称" :disable="connected" />
-          <q-input outlined v-model="robotName" label="机器人名称" :disable="connected" />
+          <q-input outlined v-model="manage.roomid" label="直播间id" :disable="connected" />
+          <q-input outlined v-model="manage.hostName" label="主播名称" :disable="connected" />
+          <q-input outlined v-model="manage.robotName" label="机器人名称" :disable="connected" />
         </div>
         <div class="flex gap-2 m-3">
           <q-btn @click="openPreview">
@@ -94,7 +94,7 @@ const roomLink = computed(() =>
               {{ item.uname }}: {{ item.message }}
             </p>
           </q-scroll-area>
-          <sendMessages :roomid="roomid" :connected="connected" class="bg-gray-100 mt-2" />
+          <sendMessages :roomid="manage.roomid" :connected="connected" class="bg-gray-100 mt-2" />
         </div>
       </q-card-section>
     </q-card>

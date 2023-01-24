@@ -6,6 +6,16 @@ export const LOGIN_INFO = {
   uname: "login_info.uname"
 };
 
+export const MANAGE = {
+  roomid: 'manage.roomid',
+  hostName: 'manage.hostName',
+  robotName: 'manage.robotName',
+  like: 'manage.like',
+  follow: 'manage.follow',
+  gift: 'manage.gift',
+  welcome: 'manage.welcome',
+};
+
 export const MESSAGE_TYPE = {
   RANK: "ONLINE_RANK_V2",
   DANMU: "DANMU_MSG",
