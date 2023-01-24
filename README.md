@@ -1,5 +1,5 @@
 # bilibili 直播弹幕机器人
-基于Tauri+vue3+ts+Sqlite 的bilibili直播弹幕机器人
+基于Tauri+vue3+ts+Sqlite 的哔哩哔哩直播间管家机器人
 
 ## 项目运行
 1. 安装依赖
