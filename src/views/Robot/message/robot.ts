@@ -229,8 +229,8 @@ let msgInterval: SetInterval;
 let clockInterval: SetInterval;
 
 watch(active, async (value) => {
-  messages.length = 0;
   if (value) {
+    messages.length = 0;
     //  开播后轮询直到获取到直播间信息再上线
     let loopLimit = 20;
     const liveInfoIntever = setInterval(async () => {
@@ -242,6 +242,10 @@ watch(active, async (value) => {
         console.log("已得到直播间信息");
         clearInterval(liveInfoIntever);
         msgInterval = setInterval(() => {
+          if (!active.value && messages.length === 0) { 
+            clearInterval(msgInterval);
+            return;
+          }
           const message = messages.shift();
           if (!message) return;
           sendMessage(message);
@@ -260,9 +264,8 @@ watch(active, async (value) => {
       }
     }, 1000 * 3);
   } else {
-    clearInterval(msgInterval);
+    messages.push(offline);
     clearInterval(clockInterval);
-    sendMessage(offline);
   }
 });
 

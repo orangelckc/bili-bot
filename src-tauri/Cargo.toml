@@ -1,6 +1,6 @@
 [package]
 name = "bili-bot"
-version = "1.2.0"
+version = "1.2.1"
 description = "哔哩哔哩直播间弹幕机器人"
 authors = ["半糖人类"]
 license = "MIT"

@@ -20,7 +20,7 @@ const getUrl = async () => {
   const { live_status, uname, title } = by_room_ids[manage.roomid];
   if (live_status !== 1) {
     message(`${uname}直播间未开播！`)
-    return
+    return false
   }
   const res = await getLiveStreamUrlApi("10000", manage.roomid);
   if (!res) return;
@@ -30,7 +30,7 @@ const getUrl = async () => {
 
 const openPreview = async () => {
   const res = await getUrl();
-  if (!res?.urls.length) return;
+  if (!res || !res?.urls.length) return
   url.value = res?.urls[0];
 };
 
@@ -67,6 +67,7 @@ const startRecord = async (order = 0) => {
     return
   }
   const res = await getUrl();
+  if (!res || !res?.urls.length) return
   const streamUrl = res?.urls[order]
   const folder = `${res?.uname}-[${manage.roomid}]`
   // 创建录制器
