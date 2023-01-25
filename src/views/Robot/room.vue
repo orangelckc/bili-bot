@@ -2,19 +2,36 @@
 import { connected, startWebsocket, stopWebsocket, active, msgList, manage } from "./message/robot";
 import { ROOM_URL_PREFIX } from "@/constants";
 import { computed, ref, watch } from "vue";
-import { getLiveStreamUrlApi } from "@/api";
-import { startRecord, stopRecord, testFfmpge } from '@/utils/cmd'
+import { getLiveStreamUrlApi, getLiveStatusApi } from "@/api";
+import { newRecorder, testFfmpge, recordPath } from '@/utils/cmd'
+import { type Child, type Command } from "@tauri-apps/api/shell";
 
 import sendMessages from "./message/index.vue";
 import Video from "./video.vue";
+import { message } from "@tauri-apps/api/dialog";
+import { open } from "@tauri-apps/api/shell";
 
-const url = ref("");
+const url = ref('');
 const isRecording = ref(false)
 
-const openPreview = async () => {
+const getUrl = async () => {
+  if (!manage.roomid.trim()) return
+  const { by_room_ids } = await getLiveStatusApi(manage.roomid);
+  const { live_status, uname, title } = by_room_ids[manage.roomid];
+  if (live_status !== 1) {
+    message(`${uname}直播间未开播！`)
+    return
+  }
   const res = await getLiveStreamUrlApi("10000", manage.roomid);
   if (!res) return;
-  url.value = res.durl[0].url;
+  const urls = res.durl.map((item: any) => item.url);
+  return { urls, uname, title };
+}
+
+const openPreview = async () => {
+  const res = await getUrl();
+  if (!res?.urls.length) return;
+  url.value = res?.urls[0];
 };
 
 const scrollRef = ref();
@@ -40,18 +57,42 @@ const scrollControl = (event: WheelEvent) => {
 const roomLink = computed(() =>
   `${ROOM_URL_PREFIX}/${manage.roomid}`);
 
-const onRecord = async () => {
-  if (isRecording.value) {
-    stopRecord()
-    isRecording.value = false
+let recorder: Command;
+let spawn: Child;
+const startRecord = async (order = 0) => {
+  // 检测ffmpeg是否安装
+  const { code } = await testFfmpge()
+  if (code) {
+    message('未检测到ffmpeg, 请先安装ffmpeg')
     return
   }
-  const res = await getLiveStreamUrlApi("10000", manage.roomid);
-  if (!res) return;
-  const flag = await testFfmpge()
-  if (!flag) return
-  startRecord(res.durl[0].url, manage.roomid)
+  const res = await getUrl();
+  const streamUrl = res?.urls[order]
+  const folder = `${res?.uname}-[${manage.roomid}]`
+  // 创建录制器
+  recorder = await newRecorder(streamUrl, folder, res?.title)
+  recorder.on("close", async ({ code }) => {
+    if (code) {
+      console.log(`${manage.roomid}链接-${order + 1} 失败`)
+      if (order === 1) {
+        await message('录制视频流失败')
+        isRecording.value = false
+        return
+      }
+      startRecord(1)
+    } else {
+      await message('录制完成')
+      open(await recordPath(folder))
+      isRecording.value = false
+    }
+  })
+  spawn = await recorder.spawn()
   isRecording.value = true
+}
+
+const stopRecord = async () => {
+  await spawn.write("q");
+  isRecording.value = false
 }
 
 </script>
@@ -100,9 +141,9 @@ const onRecord = async () => {
           </q-btn>
           <div>
             <q-icon :class="isRecording ? 'i-carbon-stop-filled text-red' : 'i-carbon-play-filled text-blue'"
-              class="justify-start hover:cursor-pointer" @click="onRecord" size="md">
+              class="justify-start hover:cursor-pointer" @click="isRecording ? stopRecord() : startRecord()" size="md">
               <q-tooltip>
-                点击开始录制
+                {{ isRecording?'结束录制': '点击开始录制' }}
               </q-tooltip>
             </q-icon>
             <span class="text-red  font-bold" v-if="isRecording"> 正在录制中... </span>
