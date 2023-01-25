@@ -9,9 +9,9 @@ fn main() {
     fix_path_env::fix().expect("修复macOS环境变量失败");
 
     tauri::Builder::default()
-        .setup(|app| {
+        .setup(|_app| {
             #[cfg(target_os = "macos")] //✅ `macOS`下不显示docker图标
-            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+            _app.set_activation_policy(tauri::ActivationPolicy::Accessory);
             Ok(())
         })
         .plugin(tauri_plugin_store::Builder::default().build())

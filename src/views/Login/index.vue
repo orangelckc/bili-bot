@@ -15,7 +15,7 @@ const logout = () => {
 };
 
 const validateLoginInfo = async () => {
-  if (!isLogin) return
+  if (!await isLogin()) return
 
   const result = await validateLoginInfoApi();
   if (result.code) {
