@@ -57,7 +57,17 @@ const initPlayer = () => {
     });
 
     flvPlayer.on(flvjs.Events.MEDIA_INFO, (data: any) => {
-      console.log("获取到媒体信息", data);
+      // 根据视频流的宽高比，设置视频的宽高
+      const { width, height } = data;
+      if (width > height) {
+        // 横屏
+        videoRef.value.style.width = '100%';
+        videoRef.value.style.height = 'auto';
+      } else {
+        // 竖屏
+        videoRef.value.style.width = '50%';
+        videoRef.value.style.height = '100%';
+      }
     });
 
   }
@@ -88,8 +98,8 @@ watch(props, async () => {
 </script>
 
 <template>
-  <div class="flex h-full items-center justify-center bg-black/30" @wheel="changeVolume">
-    <video ref="videoRef" :volume="volume" class="max-h-300px w-full " controls />
+  <div class="flex h-full items-center justify-center bg-gray/30" @wheel="changeVolume">
+    <video ref="videoRef" :volume="volume" controls />
     <div class="flex justify-around items-center gap-4">
       <div :class="audioMode ? 'i-carbon-video-filled' : 'i-carbon-headphones'"
         class="text-5xl text-white hover:cursor-pointer" @click="switchAudioMode" />
