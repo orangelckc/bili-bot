@@ -14,6 +14,7 @@ export const MANAGE = {
   follow: 'manage.follow',
   gift: 'manage.gift',
   welcome: 'manage.welcome',
+  gptToken: 'manage.gptToken'
 };
 
 export const MESSAGE_TYPE = {

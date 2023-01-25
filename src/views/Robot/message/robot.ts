@@ -22,6 +22,7 @@ export const manage = reactive({
   follow: await (getStore(MANAGE.follow)) || false,
   gift: await (getStore(MANAGE.gift)) || false,
   welcome: await (getStore(MANAGE.welcome)) || false,
+  gptToken: await getStore(MANAGE.gptToken) || ''
 });
 
 // 更新store，做持久化
@@ -169,6 +170,7 @@ const init_listener = async () => {
             messages.push(...autoSlice(`@${manage.hostName} 当前粉丝数${curFans}，今日已增长${curFans - todayFans}，冲～`));
             return;
           }
+          if (manage.gptToken === '') return
           const result = await chatGTPApi(question);
           if (!result) return;
           messages.push(...autoSlice(`@${formatUname(uname)}:${result}`));
@@ -242,7 +244,7 @@ watch(active, async (value) => {
         console.log("已得到直播间信息");
         clearInterval(liveInfoIntever);
         msgInterval = setInterval(() => {
-          if (!active.value && messages.length === 0) { 
+          if (!active.value && messages.length === 0) {
             clearInterval(msgInterval);
             return;
           }

@@ -1,8 +1,10 @@
 
+import { MANAGE } from "@/constants";
+import { getStore } from "@/store";
 import { Body } from "@tauri-apps/api/http";
 import { getQueryData } from ".";
 
-const API_KEY = "";
+const API_KEY = await getStore(MANAGE.gptToken) || ''
 const MAX_TOKENS = 100;
 const MODEL = "text-davinci-003"; // 功能最全的模型
 // const MODEL = "text-curie-001	"; // 适合聊天的模型
