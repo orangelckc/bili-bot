@@ -9,7 +9,7 @@ import { chatGTPApi } from "@/api";
 import { create_entry_sql, create_danmu_sql, create_gift_sql, sign_sql, formatUname } from "@/utils/initSQL";
 import { reactive, ref, watch } from "vue";
 import { Notify } from "quasar";
-import { MANAGE } from "@/constants";
+import { LOGIN_INFO, MANAGE } from "@/constants";
 import { getStore, setStore } from "@/store";
 
 type Key = keyof typeof MANAGE
@@ -136,6 +136,7 @@ const init_listener = async () => {
 
         // 大佬欢迎词
         if (bossList.findIndex(boss => boss.uid === "" + item.uid) !== -1) {
+          if (!manage.welcome) return;
           messages.push(...autoSlice(`欢迎${formatUname(item.uname)}来到${manage.hostName}的直播间～`));
         }
 
@@ -144,6 +145,7 @@ const init_listener = async () => {
       } else if (item.msg_type === "vip_entry") {
         // 舰长等VIP进入
         if (!active.value) return;
+        if (!manage.welcome) return;
         const str = item.copy_writing.replace(/<%|%>/g, " ");
         messages.push(...autoSlice(str));
       } else {
@@ -161,7 +163,7 @@ const init_listener = async () => {
       const { uname, message, isEmoji, uid } = item.barrage;
       message && msgList.value.push({ uname, message });
       if (!active.value) return;
-      if (message && uname !== "闹闹今天吃糖了么") {
+      if (message && uid !== (await getStore(LOGIN_INFO.uid))) {
         if (message.includes(`@${manage.robotName}`)) {
           const question = message.replace(`@${manage.robotName}`, "").trim();
           if (question.includes("粉丝数") || question.includes("今日目标")) {
@@ -231,8 +233,8 @@ let msgInterval: SetInterval;
 let clockInterval: SetInterval;
 
 watch(active, async (value) => {
+  messages.length = 0;
   if (value) {
-    messages.length = 0;
     //  开播后轮询直到获取到直播间信息再上线
     let loopLimit = 20;
     const liveInfoIntever = setInterval(async () => {
@@ -276,6 +278,7 @@ export const stopWebsocket = () => {
   connected.value = false;
   emit(EVENTS.CLOSE_WEBSOCKET_EVENT);
   unlisteners.forEach((unlistener) => unlistener());
+  unlisteners.length = 0;
 };
 
 export const startWebsocket = async () => {
