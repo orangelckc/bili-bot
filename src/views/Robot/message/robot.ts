@@ -291,10 +291,17 @@ export const startWebsocket = async () => {
     Notify.create("请输入主播名称和机器人名称");
     return;
   }
-  connected.value = true;
-  emit(EVENTS.OPEN_WEBSOCKET_EVENT, { roomid: manage.roomid });
+  // 获取直播间信息
+  const { by_room_ids } = await getLiveStatusApi(manage.roomid);
+  const roomid = Object.keys(by_room_ids)[0];
+  if (!roomid) {
+    Notify.create("直播间不存在");
+    return;
+  }
+  emit(EVENTS.OPEN_WEBSOCKET_EVENT, { roomid });
   once(EVENTS.CONNECT_SUCCESS_EVENT, (event) => {
-    console.log("ws连接成功");
+    Notify.create("直播间连接成功");
+    connected.value = true;
+    init_listener();
   });
-  init_listener();
 };

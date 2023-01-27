@@ -12,6 +12,7 @@ import { message } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
 
 import { Stream } from '@/types'
+import { Notify } from "quasar";
 
 const streams = ref<Stream[]>([]);
 const isRecording = ref(false)
@@ -19,7 +20,12 @@ const isRecording = ref(false)
 const getUrl = async () => {
   if (!manage.roomid.trim()) return
   const { by_room_ids } = await getLiveStatusApi(manage.roomid);
-  const { live_status, uname, title } = by_room_ids[manage.roomid];
+  const roomid = Object.keys(by_room_ids)[0];
+  if (!roomid) {
+    Notify.create("直播间不存在");
+    return;
+  }
+  const { live_status, uname, title } = by_room_ids[roomid];
   if (live_status !== 1) {
     message(`${uname}直播间未开播！`)
     return false
