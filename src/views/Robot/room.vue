@@ -68,6 +68,10 @@ const scrollRef = ref();
 const autoScroll = ref(true)
 
 watch(msgList.value, (val) => {
+  // 只保留最新的100条
+  if (msgList.value.length > 100) {
+    msgList.value.splice(0, msgList.value.length - 100);
+  }
   const position = scrollRef.value.getScrollPosition('vertical').top + 30 * val.length;
   autoScroll.value && scrollRef.value.setScrollPosition('vertical', position, 300)
 });
