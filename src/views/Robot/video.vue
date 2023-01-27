@@ -14,6 +14,7 @@ let curStreamIndex = 0;
 
 const volume = ref(0.5);
 const audioMode = ref(false);
+const isPlaying = ref(false)
 
 const changeVolume = (event: WheelEvent) => {
   const { deltaY } = event;
@@ -82,6 +83,7 @@ const initPlayer = () => {
         videoRef.value.style.maxHeight = '393px';
         videoRef.value.style.width = '100%';
       }
+      isPlaying.value = true
     });
   } else {
     message('系统不支持flv.js')
@@ -120,6 +122,16 @@ watchEffect(async () => {
   // curStream.value = props.streams.find(item => item.type === 'm3u8');
 })
 
+const switchPlay = () => {
+  if (isPlaying.value) {
+    flvPlayer.pause();
+    flvPlayer.unload();
+    isPlaying.value = false
+  } else {
+    flvPlayer.load();
+  }
+}
+
 
 </script>
 
@@ -129,6 +141,9 @@ watchEffect(async () => {
     <div class="flex justify-around items-center gap-4">
       <div :class="audioMode ? 'i-carbon-video-filled' : 'i-carbon-headphones'"
         class="text-5xl text-white hover:cursor-pointer" @click="switchAudioMode" />
+      <div :class="isPlaying ? 'i-carbon-stop-outline' : 'i-carbon-play-filled'"
+        class="text-4xl text-white hover:cursor-pointer" @click="switchPlay" />
+
     </div>
   </div>
 </template>
