@@ -2,7 +2,7 @@
 import { connected, startWebsocket, stopWebsocket, active, msgList, manage } from "./message/robot";
 import { ROOM_URL_PREFIX } from "@/constants";
 import { computed, ref, watch } from "vue";
-import { getLiveStreamUrlApi, getLiveStatusApi } from "@/api";
+import { getLiveM3U8UrlApi, getLiveStatusApi } from "@/api";
 import { newRecorder, testFfmpge, recordPath } from '@/utils/cmd'
 import { type Child, type Command } from "@tauri-apps/api/shell";
 
@@ -11,7 +11,9 @@ import Video from "./video.vue";
 import { message } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
 
-const url = ref('');
+import { Stream } from '@/types'
+
+const streams = ref<Stream[]>([]);
 const isRecording = ref(false)
 
 const getUrl = async () => {
@@ -22,16 +24,44 @@ const getUrl = async () => {
     message(`${uname}直播间未开播！`)
     return false
   }
-  const res = await getLiveStreamUrlApi("10000", manage.roomid);
+
+  const res = await getLiveM3U8UrlApi('10000', manage.roomid);
   if (!res) return;
-  const urls = res.durl.map((item: any) => item.url);
+  const urls = [] as Stream[]
+  res.playurl_info.playurl.stream.forEach((stream: any) => {
+    if (stream.protocol_name === 'http_hls') {
+      // m3u8格式
+      stream.format.forEach((format: any) => {
+        if (format.format_name === 'ts') {
+          const { base_url, url_info } = format.codec[0];
+          urls.push({
+            type: 'm3u8',
+            url: `${url_info[0].host}${base_url}${url_info[0].extra}`,
+            ext: '.mp4'
+          })
+        }
+      });
+    } else if (stream.protocol_name === 'http_stream') {
+      // flv格式
+      stream.format.forEach((format: any) => {
+        if (format.format_name === 'flv') {
+          const { base_url, url_info } = format.codec[0];
+          urls.push({
+            type: 'flv',
+            url: `${url_info[0].host}${base_url}${url_info[0].extra}`,
+            ext: '.mp4'
+          })
+        }
+      });
+    }
+  });
   return { urls, uname, title };
 }
 
 const openPreview = async () => {
   const res = await getUrl();
   if (!res || !res?.urls.length) return
-  url.value = res?.urls[0];
+  streams.value = [...res?.urls];
 };
 
 const scrollRef = ref();
@@ -68,19 +98,19 @@ const startRecord = async (order = 0) => {
   }
   const res = await getUrl();
   if (!res || !res?.urls.length) return
-  const streamUrl = res?.urls[order]
+  const streamUrl = res?.urls[order];
   const folder = `${res?.uname}-[${manage.roomid}]`
   // 创建录制器
-  recorder = await newRecorder(streamUrl, folder, res?.title)
+  recorder = await newRecorder(streamUrl?.url, folder, res?.title, streamUrl?.ext)
   recorder.on("close", async ({ code }) => {
     if (code) {
-      console.log(`${manage.roomid}链接-${order + 1} 失败`)
-      if (order === 1) {
+      console.log(`录制${manage.roomid}-${streamUrl?.type} 视频流失败`)
+      if (order === res.urls.length - 1) {
         await message('录制视频流失败')
         isRecording.value = false
         return
       }
-      startRecord(1)
+      startRecord(order + 1)
     } else {
       await message('录制完成')
       open(await recordPath(folder))
@@ -164,7 +194,7 @@ const stopRecord = async () => {
     <q-card class="my-2">
       <q-card-section class="flex items-center h-[480px] gap-2">
         <div class="max-w-3/5 flex-grow ">
-          <Video :url="url" v-show="url.length" />
+          <Video :streams="streams" v-show="streams.length" />
         </div>
         <div class="flex-grow max-w-2/5">
           <q-scroll-area ref="scrollRef" class="h-[350px]" @wheel="scrollControl" :visible="false">

@@ -22,16 +22,6 @@ const getLiveStatusApi = async (room_ids: string) =>
     }
   );
 
-// 获取直播线路
-const getLiveStreamApi = async () =>
-  await getQueryData(
-    `${LIVE_URL_PREFIX}/xlive/app-blink/v1/live/getWebUpStreamAddr`,
-    {
-      query: { platform: "pc" },
-      headers: { cookie: await getStore(LOGIN_INFO.cookie) }
-    }
-  );
-
 // 获取身份码
 const getLiveCodeApi = async () =>
   await getQueryData(
@@ -124,8 +114,8 @@ const sendMessageApi = async (message: SendMessage) => {
   });
 };
 
-// 获取直播视频流
-const getLiveStreamUrlApi = async (qn: string = "0", roomid: string) =>
+// 获取直播视频流 flv格式
+const getLiveFlvUrlApi = async (qn: string = "0", roomid: string) =>
   await getQueryData(`${LIVE_URL_PREFIX}/room/v1/Room/playUrl`, {
     query: {
       cid: roomid,
@@ -133,6 +123,22 @@ const getLiveStreamUrlApi = async (qn: string = "0", roomid: string) =>
       platform: "web"
     }
   });
+
+// 获取直播视频流 m3u8格式
+const getLiveM3U8UrlApi = async (qn: string = "0", roomid: string) =>
+  await getQueryData(`${LIVE_URL_PREFIX}/xlive/web-room/v2/index/getRoomPlayInfo`, {
+    query: {
+      device: "pc",
+      platform: "web",
+      scale: "3",
+      build: qn,
+      protocol: "0,1",
+      format: "0,1,2",
+      codec: "0,1",
+      room_id: roomid
+    }
+  })
+
 
 // 获取关注的主播列表
 const getMyFollowLiveInfo = async (page: string = "1") =>
@@ -152,11 +158,11 @@ const getMyFollowLiveInfo = async (page: string = "1") =>
 export {
   getLiveCategoryApi,
   getLiveStatusApi,
-  getLiveStreamApi,
   getLiveCodeApi,
   getGiftApi,
   getEmojiApi,
   sendMessageApi,
-  getLiveStreamUrlApi,
+  getLiveFlvUrlApi,
+  getLiveM3U8UrlApi,
   getMyFollowLiveInfo
 };

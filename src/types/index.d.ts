@@ -8,3 +8,9 @@ export interface SendMessage {
   dm_type?: string;
   isInitiative?: boolean;
 }
+
+export type Stream = {
+  type: string;
+  url: string;
+  ext: string;
+};

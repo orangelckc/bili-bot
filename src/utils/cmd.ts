@@ -9,13 +9,11 @@ export const recordPath = async (folder: string) =>
 export const testFfmpge = () =>
   new Command("ffmpeg-version").execute();
 
-export const newRecorder = async (streamUrl: string, folder: string, description: string) => {
+export const newRecorder = async (streamUrl: string, folder: string, description: string, ext: string) => {
   // 片段时长
   const partDuration = "1800";
   // 片段名
   const segment = `part%03d`
-  // 文件后缀
-  const ext = ".mp4"
   // 当前时间
   const timestamp = `${dayjs().format("YYYY-MM-DD HH")}点场`;
   // 直播录制存储路径
