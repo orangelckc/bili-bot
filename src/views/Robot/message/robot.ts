@@ -163,7 +163,7 @@ const init_listener = async () => {
       const { uname, message, isEmoji, uid } = item.barrage;
       message && msgList.value.push({ uname, message });
       if (!active.value) return;
-      if (message && uid !== (await getStore(LOGIN_INFO.uid))) {
+      if (message && uid !== parseInt(await getStore(LOGIN_INFO.uid))) {
         if (message.includes(`@${manage.robotName}`)) {
           const question = message.replace(`@${manage.robotName}`, "").trim();
           if (question.includes("粉丝数") || question.includes("今日目标")) {
