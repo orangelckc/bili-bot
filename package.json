@@ -1,12 +1,12 @@
 {
   "name": "bili-bot",
   "private": true,
-  "version": "1.2.5",
+  "version": "1.2.6",
   "type": "module",
   "scripts": {
     "dev": "npm run build:icon & vite",
     "build": "npm run build:icon & vite build",
-    "build:icon": "npx @tauri-apps/tauricon ./src-tauri/assets/icon.svg",
+    "build:icon": "npx @tauri-apps/tauricon ./src-tauri/assets/icon.png",
     "preview": "vite preview",
     "tauri": "tauri"
   },

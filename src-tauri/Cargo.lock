@@ -98,7 +98,7 @@ checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
 
 [[package]]
 name = "bili-bot"
-version = "1.2.5"
+version = "1.2.6"
 dependencies = [
  "fix-path-env",
  "serde",
