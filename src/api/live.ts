@@ -114,7 +114,7 @@ const sendMessageApi = async (message: SendMessage) => {
   });
 };
 
-// 获取直播视频流 flv格式
+// 获取直播视频流 flv格式，弃用
 const getLiveFlvUrlApi = async (qn: string = "0", roomid: string) =>
   await getQueryData(`${LIVE_URL_PREFIX}/room/v1/Room/playUrl`, {
     query: {
@@ -131,7 +131,7 @@ const getLiveM3U8UrlApi = async (qn: string = "0", roomid: string) =>
       device: "pc",
       platform: "web",
       scale: "3",
-      build: qn,
+      qn: qn,
       protocol: "0,1",
       format: "0,1,2",
       codec: "0,1",
