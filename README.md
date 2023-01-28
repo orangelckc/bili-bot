@@ -1,4 +1,6 @@
-# 哔哩哔哩-直播间管家机器人
+![image](https://user-images.githubusercontent.com/48375635/215230560-0f0e015a-daeb-4ba1-9ddb-78bbcb4ff75e.png)
+# 哔哩哔哩-直播间管家机器人 ![stars](https://badgen.net/github/stars/orangelckc/bili-bot) ![forks](https://badgen.net/github/forks/orangelckc/bili-bot) ![realease](https://badgen.net/github/release/orangelckc/bili-bot)
+
 基于Tauri+vue3+ts+Sqlite 的哔哩哔哩直播间管家机器人
 
 请跳转至[Realease](https://github.com/orangelckc/bili-bot/releases)页面下载最新版本，进行体验
