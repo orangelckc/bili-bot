@@ -60,7 +60,7 @@
         "icons/icon.ico"
       ],
       "identifier": "bili-bot",
-      "longDescription": "",
+      "longDescription": "哔哩哔哩-直播间管家机器人，主播的最佳助手！",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "hdslb.com",
@@ -69,8 +69,12 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
-      "targets": "all",
+      "shortDescription": "哔哩哔哩-直播间管家机器人",
+      "targets": [
+        "deb",
+        "msi",
+        "app"
+      ],
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
@@ -91,7 +95,7 @@
         "fullscreen": false,
         "height": 800,
         "resizable": false,
-        "title": "哔哩哔哩直播助手",
+        "title": "哔哩哔哩-直播间管家机器人",
         "width": 800,
         "decorations": false
       }
