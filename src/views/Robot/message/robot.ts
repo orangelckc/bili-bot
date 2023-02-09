@@ -3,9 +3,9 @@ import { message } from "@tauri-apps/api/dialog";
 import dayjs from "dayjs";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { sendMessageApi, getMyFollowLiveInfo, getLiveStatusApi } from "@/api/live";
-import { SendMessage, SetInterval } from "@/types";
+import type { SendMessage, SetInterval } from "@/types";
 import * as EVENTS from "@/constants/events";
-import { chatGTPApi } from "@/api";
+import { chatGTPApi, getEmojiApi } from "@/api";
 import { create_entry_sql, create_danmu_sql, create_gift_sql, sign_sql, formatUname } from "@/utils/initSQL";
 import { reactive, ref, watch } from "vue";
 import { Notify } from "quasar";
@@ -13,6 +13,21 @@ import { LOGIN_INFO, MANAGE } from "@/constants";
 import { getStore, setStore } from "@/store";
 
 type Key = keyof typeof MANAGE
+
+export const connected = ref(false);
+export const active = ref(false);
+export const emojiList = ref<any[]>([]);
+
+export const msgList = ref<Record<string, any>>([]);
+export const emojiPopList = ref<Record<string, any>>([]);
+// 获取表情包列表
+const getEmojiList = async () => {
+  const result = await getEmojiApi(manage.roomid);
+  if (!result) return
+
+  emojiList.value = result.data;
+};
+
 
 export const manage = reactive({
   roomid: await (getStore(MANAGE.roomid)) || '3796382',
@@ -32,10 +47,6 @@ watch(manage, (val) => {
     await setStore(MANAGE[key], val[key])
   })
 })
-
-export const connected = ref(false);
-export const active = ref(false);
-export const msgList = ref<Record<string, any>>([]);
 
 const messages: string[] = [];
 let todayFans = 0;
@@ -92,14 +103,15 @@ const onClock = (start: number) => {
 };
 
 // 发送信息
-const sendMessage = (value: string) => {
+export const sendMessage = (value: string, type = "0") => {
   const params: SendMessage = {
-    dm_type: "0",
+    dm_type: type,
     msg: value,
     roomid: manage.roomid
   };
   console.log(params.msg);
-  sendMessageApi({ ...params, isInitiative: true });
+  const result = sendMessageApi({ ...params, isInitiative: true });
+  return !!result;
 };
 
 // 进入人数每超过100，欢迎信息
@@ -128,6 +140,8 @@ const init_listener = async () => {
     const data = event.payload as Object[];
     data.forEach(async (item: any) => {
       if (item.msg_type === "follow") {
+        if (!active.value) return;
+
         // 关注事件
         if (!manage.follow) return;
         sendMessage(`感谢${formatUname(item.uname)}关注${manage.hostName}~`);
@@ -160,8 +174,9 @@ const init_listener = async () => {
 
     const data = event.payload as Object[]
     data.forEach(async (item: any) => {
-      const { uname, message, isEmoji, uid } = item.barrage;
-      message && msgList.value.push({ uname, message });
+      const { uname, message, isEmoji, uid, emoji } = item.barrage;
+      message && !isEmoji && msgList.value.push({ uname, message });
+      isEmoji && emojiPopList.value.push(emoji);
       if (!active.value) return;
       if (message && uid !== parseInt(await getStore(LOGIN_INFO.uid))) {
         if (message.includes(`@${manage.robotName}`)) {
@@ -254,9 +269,9 @@ watch(active, async (value) => {
           if (!message) return;
           sendMessage(message);
         }, 1000 * 4);
+
         messages.push(online);
         messages.push(...intro);
-
         // 获取当前的粉丝量
         const { by_room_ids } = await getLiveStatusApi(manage.roomid);
         todayFans = by_room_ids[manage.roomid].attention;
@@ -276,6 +291,8 @@ watch(active, async (value) => {
 export const stopWebsocket = () => {
   active.value = false;
   connected.value = false;
+  msgList.value.length = 0;
+  emojiPopList.value.length = 0;
   emit(EVENTS.CLOSE_WEBSOCKET_EVENT);
   unlisteners.forEach((unlistener) => unlistener());
   unlisteners.length = 0;
@@ -303,5 +320,6 @@ export const startWebsocket = async () => {
     Notify.create("直播间连接成功");
     connected.value = true;
     init_listener();
+    getEmojiList()
   });
 };

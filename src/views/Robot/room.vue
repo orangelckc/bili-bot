@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { connected, startWebsocket, stopWebsocket, active, msgList, manage } from "./message/robot";
+import { connected, startWebsocket, stopWebsocket, active, manage } from "./message/robot";
 import { ROOM_URL_PREFIX } from "@/constants";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { getLiveM3U8UrlApi, getLiveStatusApi } from "@/api";
 import { newRecorder, testFfmpge, recordPath } from '@/utils/cmd'
 import { type Child, type Command } from "@tauri-apps/api/shell";
-
-import sendMessages from "./message/index.vue";
+import Danmaku from './message/index.vue'
 import Video from "./video.vue";
 import { message } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
@@ -69,30 +68,6 @@ const openPreview = async () => {
   if (!res || !res?.urls.length) return
   streams.value = [...res?.urls];
 };
-
-const scrollRef = ref();
-const autoScroll = ref(true)
-
-watch(msgList.value, (val) => {
-  // 只保留最新的100条
-  if (msgList.value.length > 100) {
-    msgList.value.splice(0, msgList.value.length - 100);
-  }
-  const position = scrollRef.value.getScrollPosition('vertical').top + 30 * val.length;
-  autoScroll.value && scrollRef.value.setScrollPosition('vertical', position, 300)
-});
-
-const scrollControl = (event: WheelEvent) => {
-  const position = scrollRef.value.getScrollPosition('vertical').top;
-
-  const { deltaY } = event;
-  if (deltaY < 0) {
-    autoScroll.value = false;
-  } else {
-    if (position > scrollRef.value.getScrollPosition('vertical').top - 40)
-      autoScroll.value = true;
-  }
-}
 
 const roomLink = computed(() =>
   `${ROOM_URL_PREFIX}/${manage.roomid}`);
@@ -207,18 +182,9 @@ const stopRecord = async () => {
           <Video :streams="streams" v-show="streams.length" />
         </div>
         <div class="flex-grow max-w-2/5">
-          <q-scroll-area ref="scrollRef" class="h-[350px]" @wheel="scrollControl" :visible="false">
-            <p v-for="item in msgList" :key="item">
-              {{ item.uname }}: {{ item.message }}
-            </p>
-          </q-scroll-area>
-          <sendMessages :roomid="manage.roomid" :connected="connected" class="bg-gray-100 mt-2" />
+          <Danmaku :connected="connected" />
         </div>
       </q-card-section>
     </q-card>
   </div>
 </template>
-
-<style lang="scss" scoped>
-
-</style>
