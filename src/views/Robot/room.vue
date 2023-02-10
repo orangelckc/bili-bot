@@ -9,8 +9,8 @@ import Danmaku from './message/index.vue'
 import Video from "./video.vue";
 import { message } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
-
-import { Stream } from '@/types'
+import SubTitle from "./sub-title.vue";
+import type { Stream } from '@/types'
 import { Notify } from "quasar";
 
 const streams = ref<Stream[]>([]);
@@ -178,8 +178,9 @@ const stopRecord = async () => {
 
     <q-card class="my-2">
       <q-card-section class="flex items-center h-[480px] gap-2">
-        <div class="max-w-3/5 flex-grow ">
+        <div class="max-w-3/5 flex-grow flex flex-col gap-2">
           <Video :streams="streams" v-show="streams.length" />
+          <SubTitle />
         </div>
         <div class="flex-grow max-w-2/5">
           <Danmaku :connected="connected" />
