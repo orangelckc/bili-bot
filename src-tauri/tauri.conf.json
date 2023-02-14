@@ -73,7 +73,7 @@
       "targets": [
         "deb",
         "msi",
-        "app"
+        "dmg"
       ],
       "windows": {
         "certificateThumbprint": null,
