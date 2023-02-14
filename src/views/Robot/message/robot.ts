@@ -49,6 +49,7 @@ watch(manage, (val) => {
 })
 
 const messages: string[] = [];
+let liveTime = 0
 let todayFans = 0;
 
 const online = `${manage.hostName}的小管家${manage.robotName}上钟咯，给大家请安～`;
@@ -89,6 +90,7 @@ const onClock = (start: number) => {
   // 解析后是本地的时间
   const diff = dayjs().diff(dayjs(start * 1000));
   const minutes = Math.floor(diff / 1000 / 60);
+  liveTime = minutes;
 
   const str: string[] = [];
   if (minutes % 60 === 0) {
@@ -283,6 +285,8 @@ watch(active, async (value) => {
       }
     }, 1000 * 3);
   } else {
+    // 计算今日直播时间，增长粉丝数量
+    messages.push(`@${manage.hostName}今日直播时长 ${liveTime}分钟`);
     messages.push(offline);
     clearInterval(clockInterval);
   }
