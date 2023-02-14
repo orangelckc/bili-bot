@@ -180,6 +180,11 @@ const init_listener = async () => {
       message && !isEmoji && msgList.value.push({ uname, message });
       isEmoji && emojiPopList.value.push(emoji);
       if (!active.value) return;
+      // 自动下线其他机器人
+      if (uid === 3493116453587470) {
+        active.value = false;
+        return
+      }
       if (message && uid !== parseInt(await getStore(LOGIN_INFO.uid))) {
         if (message.includes(`@${manage.robotName}`)) {
           const question = message.replace(`@${manage.robotName}`, "").trim();
@@ -189,6 +194,18 @@ const init_listener = async () => {
             messages.push(...autoSlice(`@${manage.hostName} 当前粉丝数${curFans}，今日已增长${curFans - todayFans}，冲～`));
             return;
           }
+          // 主人命令
+          if (uid === 405579368) {
+            switch (question) {
+              case '下线':
+                active.value = false;
+                break;
+              case '上线':
+                active.value = true;
+                break;
+            }
+            return
+          }
           if (manage.gptToken === '') return
           const result = await chatGTPApi(question);
           if (!result) return;
@@ -196,7 +213,6 @@ const init_listener = async () => {
         }
         message.includes("晚安") && messages.push(`晚安${formatUname(uname)}， 谢谢你的陪伴～`);
         message.includes("晚上好") && messages.push(`${formatUname(uname)}， 晚上好啊～`);
-        (message.includes("新年好") || message.includes("新年快乐")) && messages.push(`@${formatUname(uname)}， 新年快乐，红包拿来～`);
         if (message === "签到" || message === "打卡") {
           const res = await sign_sql({ uid, uname, roomid: manage.roomid });
           messages.push(...autoSlice(res));
