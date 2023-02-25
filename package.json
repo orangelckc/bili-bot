@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run build:icon && vite",
     "build": "npm run build:icon && vite build",
-    "build:icon": "npx @tauri-apps/tauricon ./src-tauri/assets/icon.png",
+    "build:icon": "npm run tauri icon ./src-tauri/assets/icon.png",
     "preview": "vite preview",
     "tauri": "tauri"
   },
