@@ -19,6 +19,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Set output
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
 
       # 安装 Node.js
       - name: Setup node
@@ -29,10 +32,9 @@ jobs:
       # 发布 Release，使用自定义名称
       - name: Generate changelog
         id: create_release
-        run: npx changelogithub --draft --name 哔哩哔哩-直播间管家机器人${{ steps.get_version.outputs.VERSION }}
+        run: npx changelogithub --draft --name 哔哩哔哩-直播间管家机器人${{ steps.vars.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
 
   # 编译 Tauri
   build-app:
@@ -60,19 +62,19 @@ jobs:
       # 安装 Rust
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        
+
       # 使用 Rust 缓存，加快安装速度
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: "./src-tauri -> target"
 
       # 获取 pnpm 缓存
       - name: Sync node version and setup cache
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          cache: 'pnpm' 
+          node-version: "16"
+          cache: "pnpm"
 
       # 安装依赖, 前端打包
       - name: Install app dependencies and build web
