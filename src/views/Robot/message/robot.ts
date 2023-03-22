@@ -34,9 +34,13 @@ export const manage = reactive({
   robotName: await (getStore(MANAGE.robotName)) || '闹闹',
   hostName: await (getStore(MANAGE.hostName)) || '条条',
   like: await (getStore(MANAGE.like)) || false,
+  likeText: '感谢{user}的点赞',
   follow: await (getStore(MANAGE.follow)) || false,
+  followText: '感谢{user}关注{up}',
   gift: await (getStore(MANAGE.gift)) || false,
+  giftText: '感谢{user}投喂的{gift}',
   welcome: await (getStore(MANAGE.welcome)) || false,
+  welcomeText: '欢迎{user}来到{up}直播间',
   gptToken: await getStore(MANAGE.gptToken) || ''
 });
 
