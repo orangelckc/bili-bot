@@ -7,6 +7,7 @@ import { newRecorder, testFfmpge, recordPath } from '@/utils/cmd'
 import { type Child, type Command } from "@tauri-apps/api/shell";
 import Danmaku from './message/index.vue'
 import Video from "./video.vue";
+import AutoDanmakuSettingDialog from './auto-danmaku-setting-dialog/index.vue';
 import { message } from "@tauri-apps/api/dialog";
 import { open } from "@tauri-apps/api/shell";
 
@@ -126,10 +127,7 @@ const stopRecord = async () => {
         </div>
         <div>
           <div class="flex">
-            <q-checkbox v-model="manage.like" label="点赞" />
-            <q-checkbox v-model="manage.follow" label="关注" />
-            <q-checkbox v-model="manage.gift" label="礼物" />
-            <q-checkbox v-model="manage.welcome" label="欢迎词" />
+            <AutoDanmakuSettingDialog />
             <q-toggle v-model="active" size="md" :disable="!connected">
               <div class="i-carbon-machine-learning text-2xl font-bold" :class="active ? 'text-green' : 'text-gray'" />
               <q-tooltip v-if="connected">

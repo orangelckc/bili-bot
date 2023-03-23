@@ -34,9 +34,13 @@ export const manage = reactive({
   robotName: await (getStore(MANAGE.robotName)) || '闹闹',
   hostName: await (getStore(MANAGE.hostName)) || '条条',
   like: await (getStore(MANAGE.like)) || false,
+  likeText: await (getStore(MANAGE.likeText)) || '感谢{user}的点赞',
   follow: await (getStore(MANAGE.follow)) || false,
+  followText: await (getStore(MANAGE.followText)) || '感谢{user}关注{up}',
   gift: await (getStore(MANAGE.gift)) || false,
+  giftText: await (getStore(MANAGE.giftText)) || '感谢{user}投喂的{gift}',
   welcome: await (getStore(MANAGE.welcome)) || false,
+  welcomeText: await (getStore(MANAGE.welcomeText)) || '欢迎{user}来到{up}直播间',
   gptToken: await getStore(MANAGE.gptToken) || ''
 });
 
@@ -146,14 +150,16 @@ const init_listener = async () => {
 
         // 关注事件
         if (!manage.follow) return;
-        sendMessage(`感谢${formatUname(item.uname)}关注${manage.hostName}~`);
+        const message = manage.followText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+        messages.push(...autoSlice(message));
       } else if (item.msg_type === "entry") {
         if (!active.value) return;
 
         // 大佬欢迎词
         if (bossList.findIndex(boss => boss.uid === "" + item.uid) !== -1) {
           if (!manage.welcome) return;
-          messages.push(...autoSlice(`欢迎${formatUname(item.uname)}来到${manage.hostName}的直播间～`));
+          const message = manage.welcomeText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+          messages.push(...autoSlice(message));
         }
 
         enter_num.value += 1;
@@ -220,7 +226,8 @@ const init_listener = async () => {
       if (item.barrageType === "like") {
         // 点赞事件
         if (!manage.like) return;
-        messages.push(...autoSlice(`感谢${formatUname(uname)}的点赞~`));
+        const message = manage.likeText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+        messages.push(...autoSlice(message));
       } else {
         !isEmoji && create_danmu_sql({ ...item, roomid: manage.roomid });
       }
@@ -237,7 +244,11 @@ const init_listener = async () => {
       create_gift_sql({ ...item, roomid: manage.roomid });
       if (!manage.gift) return;
       const { uname, giftName, giftId } = item.barrage;
-      giftId !== 1 && messages.push(...autoSlice(`感谢${formatUname(uname)}赠送的${giftName || "礼物"}~`));
+      const message = manage.giftText.replaceAll('{user}', formatUname(uname))
+      .replaceAll('{up}', manage.hostName)
+      .replaceAll('{gift}', giftName || "礼物")
+      
+      giftId !== 1 && messages.push(...autoSlice(message));
     });
   });
 
