@@ -14,7 +14,11 @@ export const MANAGE = {
   follow: 'manage.follow',
   gift: 'manage.gift',
   welcome: 'manage.welcome',
-  gptToken: 'manage.gptToken'
+  gptToken: 'manage.gptToken',
+  likeText: 'manage.likeText',
+  followText: 'manage.followText',
+  giftText: 'manage.giftText',
+  welcomeText: 'manage.welcomeText'
 };
 
 export const MESSAGE_TYPE = {
