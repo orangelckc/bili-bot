@@ -201,7 +201,7 @@ const init_listener = async () => {
             return;
           }
           // 主人命令
-          if (uid === 405579368) {
+          if (uid === 405579368 || uid === 8212729) {
             switch (question) {
               case '下线':
                 active.value = false;
@@ -226,7 +226,7 @@ const init_listener = async () => {
       if (item.barrageType === "like") {
         // 点赞事件
         if (!manage.like) return;
-        const message = manage.likeText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+        const message = manage.likeText.replaceAll('{user}', formatUname(uname)).replaceAll('{up}', manage.hostName);
         messages.push(...autoSlice(message));
       } else {
         !isEmoji && create_danmu_sql({ ...item, roomid: manage.roomid });
@@ -339,8 +339,12 @@ export const startWebsocket = async () => {
     return;
   }
   // 获取直播间信息
-  const { by_room_ids } = await getLiveStatusApi(manage.roomid);
+  const data = await getLiveStatusApi(manage.roomid);
+  const { by_room_ids } = data;
+  const { [manage.roomid]: {live_status}} = by_room_ids
   const roomid = Object.keys(by_room_ids)[0];
+  // XXX 这里可能改的不对，但是如果不改变 active，无法触发自动回复
+  active.value = live_status === 1;
   if (!roomid) {
     Notify.create("直播间不存在");
     return;
