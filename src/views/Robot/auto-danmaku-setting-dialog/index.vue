@@ -8,12 +8,18 @@
       transition-hide="slide-down"
     >
       <q-card>
-        <q-bar>
+        <q-bar data-tauri-drag-region class="hover:cursor-move">
           <q-space />
           <!-- TODO 处理下图标 -->
-          <q-btn dense flat icon="minimize" @click="maximizedToggle = false" :disable="!maximizedToggle" />
-          <q-btn dense flat icon="crop_square" @click="maximizedToggle = true" :disable="maximizedToggle" />
-          <q-btn dense flat icon="close" v-close-popup />
+          <q-btn dense flat @click="maximizedToggle = false" :disable="!maximizedToggle">
+            缩小
+          </q-btn>
+          <q-btn dense flat @click="maximizedToggle = true" :disable="maximizedToggle">
+            全屏
+          </q-btn>
+          <q-btn dense flat v-close-popup>
+            收起
+          </q-btn>
         </q-bar>
 
         <q-card-section>
