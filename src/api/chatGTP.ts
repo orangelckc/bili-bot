@@ -6,29 +6,40 @@ import { getQueryData } from ".";
 
 const API_KEY = await getStore(MANAGE.gptToken) || ''
 const MAX_TOKENS = 100;
-const MODEL = "text-davinci-003"; // 功能最全的模型
-// const MODEL = "text-curie-001	"; // 适合聊天的模型
+const MODEL = "gpt-3.5-turbo-0301"; // 功能最全的模型
 
 const chatGTPApi = async (question: string) => {
-  const str = `请用10个字回答问题：${question}`;
+  const prompts = [
+    {
+      role: 'system',
+      content: '你是一个快问快答机器人，用10个字回答问题，注意：不能超过10个字，不要给我发代码！'
+    }, {
+      role: 'user',
+      content: question
+    }
+  ]
+
+
   const res = await getQueryData(
-    "https://api.openai.com/v1/completions",
+    `${import.meta.env.VITE_PROXY_URL}/v1/chat/completions`,
     {
       method: "POST",
       body: Body.json({
         model: MODEL,
-        prompt: str,
+        messages: prompts,
+        temperature: 0.6,
         max_tokens: MAX_TOKENS
       }),
       headers: {
         "Content-Type": "application/json",
+        Accept: 'application/json',
         Authorization: `Bearer ${API_KEY}`
       },
       returnError: true
     }
   );
   console.log("chatGTP回答：", res);
-  return res.choices[0].text.replace(/？*\?*\s*\r*/g, "");
+  return res.choices[0].message.content.replace(/？*\?*\s*\r*/g, "");
 };
 
 export { chatGTPApi };
