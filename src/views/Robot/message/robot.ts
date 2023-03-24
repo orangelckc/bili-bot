@@ -7,7 +7,7 @@ import type { SendMessage, SetInterval } from "@/types";
 import * as EVENTS from "@/constants/events";
 import { chatGTPApi, getEmojiApi } from "@/api";
 import { create_entry_sql, create_danmu_sql, create_gift_sql, sign_sql, formatUname } from "@/utils/initSQL";
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, toRef, watch } from "vue";
 import { Notify } from "quasar";
 import { LOGIN_INFO, MANAGE } from "@/constants";
 import { getStore, setStore } from "@/store";
@@ -28,6 +28,13 @@ const getEmojiList = async () => {
   emojiList.value = result.data;
 };
 
+watch(active, value => {
+  if (value && !connected.value) {
+    active.value = false;
+    Notify.create("未连接直播间，无法启动自动弹幕");
+  }
+})
+
 
 export const manage = reactive({
   roomid: await (getStore(MANAGE.roomid)) || '3796382',
@@ -42,6 +49,13 @@ export const manage = reactive({
   welcome: await (getStore(MANAGE.welcome)) || false,
   welcomeText: await (getStore(MANAGE.welcomeText)) || '欢迎{user}来到{up}直播间',
   gptToken: await getStore(MANAGE.gptToken) || ''
+});
+
+export const isOpenChatgpt = ref(false);
+
+watch(toRef(manage, 'gptToken'), value => {
+  console.log(value);
+  isOpenChatgpt.value = value.length > 0;
 });
 
 // 更新store，做持久化
