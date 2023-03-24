@@ -81,8 +81,8 @@ const welcome = [
 
 const intro = [
   `我是管家${manage.robotName}，我会和${manage.hostName}一起陪伴大家`,
-  `可以在弹幕里@${manage.robotName}，和我聊天一起玩哦～`
 ];
+manage.gptToken && intro.push(`可以在弹幕里@${manage.robotName}，和我聊天一起玩哦～`)
 
 const bossList = [
   {
@@ -130,8 +130,8 @@ export const sendMessage = (value: string, type = "0") => {
     roomid: manage.roomid
   };
   console.log(params.msg);
-  // const result = sendMessageApi({ ...params, isInitiative: true });
-  // return !!result;
+  const result = sendMessageApi({ ...params, isInitiative: true });
+  return !!result;
 };
 
 // 进入人数每超过100，欢迎信息
@@ -359,10 +359,7 @@ export const startWebsocket = async () => {
   // 获取直播间信息
   const data = await getLiveStatusApi(manage.roomid);
   const { by_room_ids } = data;
-  const { [manage.roomid]: {live_status}} = by_room_ids
   const roomid = Object.keys(by_room_ids)[0];
-  // XXX 这里可能改的不对，但是如果不改变 active，无法触发自动回复
-  active.value = live_status === 1;
   if (!roomid) {
     Notify.create("直播间不存在");
     return;
