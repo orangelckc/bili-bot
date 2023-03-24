@@ -130,8 +130,8 @@ export const sendMessage = (value: string, type = "0") => {
     roomid: manage.roomid
   };
   console.log(params.msg);
-  const result = sendMessageApi({ ...params, isInitiative: true });
-  return !!result;
+  // const result = sendMessageApi({ ...params, isInitiative: true });
+  // return !!result;
 };
 
 // 进入人数每超过100，欢迎信息
@@ -298,7 +298,11 @@ watch(active, async (value) => {
       const roomInfo = await getMyFollowLiveInfo();
       const target = roomInfo.rooms.find((room: { roomid: number; }) => room.roomid === parseInt(manage.roomid));
       loopLimit -= 1;
-      if (loopLimit === 0) clearInterval(liveInfoIntever);
+      if (loopLimit === 0) {
+        Notify.create('当前主播未开播，无法启动自动回复');
+        active.value = false;
+        clearInterval(liveInfoIntever);
+      }
       if (target !== undefined) {
         console.log("已得到直播间信息");
         clearInterval(liveInfoIntever);
