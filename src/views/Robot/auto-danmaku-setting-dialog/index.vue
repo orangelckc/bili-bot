@@ -61,9 +61,6 @@
           <div>
             <q-checkbox v-model="isOpenChatgpt" label="GPT问答机器人" />
             <q-input outlined v-model="manage.gptToken" label="输入chatgpt的token才可以启用。启用后，管家会使用 chatgpt 但回答问题，回答不会超过10个字" />
-            <div>
-              
-            </div>
           </div>
         </q-card-section>
       </q-card>
