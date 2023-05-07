@@ -128,20 +128,7 @@ const stopRecord = async () => {
         <div>
           <div class="flex">
             <AutoDanmakuSettingDialog />
-            <q-toggle v-model="active" size="md" :disable="!connected">
-              <div class="i-carbon-machine-learning text-2xl font-bold" :class="active ? 'text-green' : 'text-gray'" />
-              <q-tooltip v-if="connected">
-                开启机器人
-              </q-tooltip>
-            </q-toggle>
-            <q-icon class="i-carbon-add-alt" color="primary">
-              <q-tooltip>
-                修改GPT-Token
-              </q-tooltip>
-              <q-popup-proxy>
-                <q-input v-model="manage.gptToken" dense autofocus />
-              </q-popup-proxy>
-            </q-icon>
+            <q-toggle v-model="active" size="md" :label="active ? '已开启自动弹幕' : '未开启自动弹幕'"/>
           </div>
         </div>
       </q-card-section>

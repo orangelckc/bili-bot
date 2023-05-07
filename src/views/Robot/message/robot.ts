@@ -7,7 +7,7 @@ import type { SendMessage, SetInterval } from "@/types";
 import * as EVENTS from "@/constants/events";
 import { chatGTPApi, getEmojiApi } from "@/api";
 import { create_entry_sql, create_danmu_sql, create_gift_sql, sign_sql, formatUname } from "@/utils/initSQL";
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, toRef, watch } from "vue";
 import { Notify } from "quasar";
 import { LOGIN_INFO, MANAGE } from "@/constants";
 import { getStore, setStore } from "@/store";
@@ -28,6 +28,13 @@ const getEmojiList = async () => {
   emojiList.value = result.data;
 };
 
+watch(active, value => {
+  if (value && !connected.value) {
+    active.value = false;
+    Notify.create("未连接直播间，无法启动自动弹幕");
+  }
+})
+
 
 export const manage = reactive({
   roomid: await (getStore(MANAGE.roomid)) || '3796382',
@@ -42,6 +49,13 @@ export const manage = reactive({
   welcome: await (getStore(MANAGE.welcome)) || false,
   welcomeText: await (getStore(MANAGE.welcomeText)) || '欢迎{user}来到{up}直播间',
   gptToken: await getStore(MANAGE.gptToken) || ''
+});
+
+export const isOpenChatgpt = ref(false);
+
+watch(toRef(manage, 'gptToken'), value => {
+  console.log(value);
+  isOpenChatgpt.value = value.length > 0;
 });
 
 // 更新store，做持久化
@@ -67,8 +81,8 @@ const welcome = [
 
 const intro = [
   `我是管家${manage.robotName}，我会和${manage.hostName}一起陪伴大家`,
-  `可以在弹幕里@${manage.robotName}，和我聊天一起玩哦～`
 ];
+manage.gptToken && intro.push(`可以在弹幕里@${manage.robotName}，和我聊天一起玩哦～`)
 
 const bossList = [
   {
@@ -201,7 +215,7 @@ const init_listener = async () => {
             return;
           }
           // 主人命令
-          if (uid === 405579368) {
+          if (uid === 405579368 || uid === 8212729) {
             switch (question) {
               case '下线':
                 active.value = false;
@@ -226,7 +240,7 @@ const init_listener = async () => {
       if (item.barrageType === "like") {
         // 点赞事件
         if (!manage.like) return;
-        const message = manage.likeText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+        const message = manage.likeText.replaceAll('{user}', formatUname(uname)).replaceAll('{up}', manage.hostName);
         messages.push(...autoSlice(message));
       } else {
         !isEmoji && create_danmu_sql({ ...item, roomid: manage.roomid });
@@ -284,7 +298,11 @@ watch(active, async (value) => {
       const roomInfo = await getMyFollowLiveInfo();
       const target = roomInfo.rooms.find((room: { roomid: number; }) => room.roomid === parseInt(manage.roomid));
       loopLimit -= 1;
-      if (loopLimit === 0) clearInterval(liveInfoIntever);
+      if (loopLimit === 0) {
+        Notify.create('当前主播未开播，无法启动自动回复');
+        active.value = false;
+        clearInterval(liveInfoIntever);
+      }
       if (target !== undefined) {
         console.log("已得到直播间信息");
         clearInterval(liveInfoIntever);
@@ -339,7 +357,8 @@ export const startWebsocket = async () => {
     return;
   }
   // 获取直播间信息
-  const { by_room_ids } = await getLiveStatusApi(manage.roomid);
+  const data = await getLiveStatusApi(manage.roomid);
+  const { by_room_ids } = data;
   const roomid = Object.keys(by_room_ids)[0];
   if (!roomid) {
     Notify.create("直播间不存在");
