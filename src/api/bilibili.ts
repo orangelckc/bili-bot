@@ -44,8 +44,8 @@ const validateLoginInfoApi = async () =>
 
 // 获取用户信息
 const getUserInfoApi = async () =>
-  await getQueryData(`${BASE_URL_PREFIX}/x/space/acc/info`, {
-    query: { mid: (await getStore(LOGIN_INFO.uid)), jsonp: "jsonp" }
+  await getQueryData(`${BASE_URL_PREFIX}/x/space/wbi/acc/info`, {
+    query: { mid: (await getStore(LOGIN_INFO.uid)) }
   });
 
 export {

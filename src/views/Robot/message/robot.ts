@@ -28,7 +28,6 @@ const getEmojiList = async () => {
   emojiList.value = result.data;
 };
 
-
 export const manage = reactive({
   roomid: await (getStore(MANAGE.roomid)) || '3796382',
   robotName: await (getStore(MANAGE.robotName)) || '闹闹',
@@ -72,9 +71,28 @@ const intro = [
 
 const bossList = [
   {
-    uid: "",
-    uname: "",
-    nickname: ""
+    uid: "349931835",
+    uname: "纯鱼子酱",
+    nickname: "小王同学",
+    text: ",作业写完了么？"
+  },
+  {
+    uid: "677100107",
+    uname: "犷吉",
+    nickname: "犷吉姐姐",
+    text: ",有没有给闹闹带糖啊？"
+  },
+  {
+    uid: "409672400",
+    uname: "cryingwatermelon",
+    nickname: "西瓜姐姐",
+    text: ",快来夸夸闹闹吧～"
+  },
+  {
+    uid: "79589619",
+    uname: "小co_hegk",
+    nickname: "",
+    text: "夸夸团上线啦，@{up}不要摸鱼啦～"
   }
 ];
 
@@ -102,7 +120,7 @@ const onClock = (start: number) => {
   }
   if (minutes % 40 === 0) {
     str.push(`@${manage.hostName}累不累啊？喝点水休息一会吧～`);
-    if (minutes / 60 > 3) { str.push(`${manage.robotName}都困困了呢，@${manage.hostName}真的好努力啊！`); }
+    if (minutes / 60 > 3) { str.push(`@${manage.hostName}今天好努力啊，继续加油吧！`); }
   }
 
   return str;
@@ -145,20 +163,18 @@ const init_listener = async () => {
 
     const data = event.payload as Object[];
     data.forEach(async (item: any) => {
-      if (item.msg_type === "follow") {
-        if (!active.value) return;
+      if (!active.value) return;
 
+      if (item.msg_type === "follow") {
         // 关注事件
         if (!manage.follow) return;
         const message = manage.followText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
         messages.push(...autoSlice(message));
       } else if (item.msg_type === "entry") {
-        if (!active.value) return;
-
         // 大佬欢迎词
-        if (bossList.findIndex(boss => boss.uid === "" + item.uid) !== -1) {
-          if (!manage.welcome) return;
-          const message = manage.welcomeText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+        const boss = bossList.find(boss => boss.uid === "" + item.uid)
+        if (boss) {
+          const message = (boss.nickname + boss.text).replaceAll('{up}', formatUname(manage.hostName))
           messages.push(...autoSlice(message));
         }
 
@@ -166,8 +182,6 @@ const init_listener = async () => {
         create_entry_sql(item);
       } else if (item.msg_type === "vip_entry") {
         // 舰长等VIP进入
-        if (!active.value) return;
-        if (!manage.welcome) return;
         const str = item.copy_writing.replace(/<%|%>/g, " ");
         messages.push(...autoSlice(str));
       } else {
@@ -187,7 +201,7 @@ const init_listener = async () => {
       isEmoji && emojiPopList.value.push(emoji);
       if (!active.value) return;
       // 自动下线其他机器人
-      if (uid === 3493116453587470 && uid!==parseInt(await getStore(LOGIN_INFO.uid))) {
+      if (uid === 3493116453587470 && uid !== parseInt(await getStore(LOGIN_INFO.uid))) {
         active.value = false;
         return
       }
@@ -218,7 +232,7 @@ const init_listener = async () => {
         }
         message.includes("晚安") && messages.push(`晚安${formatUname(uname)}， 谢谢你的陪伴～`);
         message.includes("晚上好") && messages.push(`${formatUname(uname)}， 晚上好啊～`);
-        if (message === "签到" || message === "打卡") {
+        if (message === "签到" || message === "打卡" || message === 'daka') {
           const res = await sign_sql({ uid, uname, roomid: manage.roomid });
           messages.push(...autoSlice(res));
         }
@@ -244,10 +258,11 @@ const init_listener = async () => {
       create_gift_sql({ ...item, roomid: manage.roomid });
       if (!manage.gift) return;
       const { uname, giftName, giftId } = item.barrage;
-      const message = manage.giftText.replaceAll('{user}', formatUname(uname))
-      .replaceAll('{up}', manage.hostName)
-      .replaceAll('{gift}', giftName || "礼物")
-      
+      const message = manage.giftText
+        .replaceAll('{user}', formatUname(uname))
+        .replaceAll('{up}', manage.hostName)
+        .replaceAll('{gift}', giftName || "礼物")
+
       giftId !== 1 && messages.push(...autoSlice(message));
     });
   });

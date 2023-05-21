@@ -1,72 +1,63 @@
-<template>
-  <q-btn label="设置自动弹幕" @click="dialog = true" />
-  <q-dialog
-      v-model="dialog"
-      persistent
-      :maximized="maximizedToggle"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-    >
-      <q-card>
-        <q-bar data-tauri-drag-region class="hover:cursor-move">
-          <q-space />
-          <!-- TODO 处理下图标 -->
-          <q-btn dense flat @click="maximizedToggle = false" :disable="!maximizedToggle">
-            缩小
-          </q-btn>
-          <q-btn dense flat @click="maximizedToggle = true" :disable="maximizedToggle">
-            全屏
-          </q-btn>
-          <q-btn dense flat v-close-popup>
-            收起
-          </q-btn>
-        </q-bar>
-
-        <q-card-section>
-          <div class="text-h6">设置自动发送的弹幕</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div>
-            输入框中的特殊标记会自动替换成指定的文本
-          </div>
-          <ul>
-            <li>{up} 会被替换成主播名称</li>
-            <li>{user} 会被替换成用户昵称</li>
-            <li>{gift} 会被替换成礼物名称 </li>
-          </ul>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <div>
-            <q-checkbox v-model="manage.like" label="点赞" />
-            <q-input outlined v-model="manage.likeText" label="有人点赞时发送" />
-          </div>
-          <div>
-            <q-checkbox v-model="manage.follow" label="关注" />
-            <q-input outlined v-model="manage.followText" label="有人关注时发送" />
-          </div>
-          <div>
-            <q-checkbox v-model="manage.gift" label="礼物" />
-            <q-input outlined v-model="manage.giftText" label="有人送礼物时发送" />
-          </div>
-          <div>
-            <q-checkbox v-model="manage.welcome" label="欢迎词" />
-            <q-input outlined v-model="manage.welcomeText" label="有人进直播间时发送" />
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-</template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { manage } from '../message/robot';
-// 是否打开设置页面
+
 const dialog = ref(false);
-// 是否最大化设置页面
-const maximizedToggle = ref(true);
 </script>
 
-<style lang="less" scoped>
-</style>
+<template>
+  <q-btn label="设置机器人弹幕" @click="dialog = true" />
+
+  <q-dialog v-model="dialog" persistent no-shake full-width>
+    <q-card>
+      <q-card-section class="flex justify-between items-center">
+        <div class="text-2xl">设置机器人弹幕</div>
+        <q-btn flat round dense @click="dialog = false" size="lg">
+          <div class="i-carbon-close-filled"></div>
+        </q-btn>
+      </q-card-section>
+
+      <q-card-section>
+        <p class="text-lg text-center">
+          输入框中的特殊标记会自动替换成指定的文本
+        </p>
+
+        <q-list bordered separator>
+          <q-item v-ripple>
+            <q-item-section>
+              <span>主播名称: <span class="font-bold text-red-500">{up}</span></span>
+            </q-item-section>
+            <q-item-section>
+              <span>用户昵称: <span class="font-bold text-red-500">{user}</span></span>
+            </q-item-section>
+            <q-item-section>
+              <span>礼物名称: <span class="font-bold text-red-500">{gift}</span></span>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-card-section>
+
+      <q-card-section class="flex flex-col px-3 gap-2 items-center">
+        <div class="flex w-full justify-around items-center">
+          <q-checkbox v-model="manage.like" label="点赞" />
+          <q-input outlined v-model="manage.likeText" dense hint="有人点赞时发送" class="w-4/5" />
+        </div>
+        <div class="flex w-full justify-around items-center">
+          <q-checkbox v-model="manage.follow" label="关注" />
+          <q-input outlined v-model="manage.followText" dense hint="有人关注时发送" class="w-4/5" />
+        </div>
+        <div class="flex w-full justify-around items-center">
+          <q-checkbox v-model="manage.gift" label="礼物" />
+          <q-input outlined v-model="manage.giftText" dense hint="有人送礼物时发送" class="w-4/5" />
+        </div>
+        <div class="flex w-full justify-around items-center">
+          <q-checkbox v-model="manage.welcome" label="欢迎词" />
+          <q-input outlined v-model="manage.welcomeText" dense hint="人气到达设定值时触发" class="w-4/5" />
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+</template>
+
+
