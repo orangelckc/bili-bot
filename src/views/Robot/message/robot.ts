@@ -60,7 +60,6 @@ const offline = `${manage.robotName}要下线了，感谢大家的陪伴～`;
 
 const welcome = [
   `欢迎新朋友们来到${manage.hostName}的直播间～`,
-  `${manage.hostName}有才有德，有点帅，快来关注他吧～`,
   "发发弹幕，可以触发直播间好玩的互动功能哟～"
 ];
 
@@ -70,31 +69,15 @@ const intro = [
 ];
 
 const bossList = [
-  {
-    uid: "349931835",
-    uname: "纯鱼子酱",
-    nickname: "小王同学",
-    text: ",作业写完了么？"
-  },
-  {
-    uid: "677100107",
-    uname: "犷吉",
-    nickname: "犷吉姐姐",
-    text: ",有没有给闹闹带糖啊？"
-  },
-  {
+    {
     uid: "409672400",
     uname: "cryingwatermelon",
     nickname: "西瓜姐姐",
-    text: ",快来夸夸闹闹吧～"
+    text: ", 快来夸夸闹闹吧～"
   },
-  {
-    uid: "79589619",
-    uname: "小co_hegk",
-    nickname: "",
-    text: "夸夸团上线啦，@{up}不要摸鱼啦～"
-  }
 ];
+
+const masterList = [405579368 ]
 
 const autoSlice = (str: string) => {
   const arr: string[] = [];
@@ -165,6 +148,7 @@ const init_listener = async () => {
     data.forEach(async (item: any) => {
       if (!active.value) return;
 
+
       if (item.msg_type === "follow") {
         // 关注事件
         if (!manage.follow) return;
@@ -174,7 +158,7 @@ const init_listener = async () => {
         // 大佬欢迎词
         const boss = bossList.find(boss => boss.uid === "" + item.uid)
         if (boss) {
-          const message = (boss.nickname + boss.text).replaceAll('{up}', formatUname(manage.hostName))
+          const message = `${boss.nickname}${boss.text}`.replaceAll('{up}', formatUname(manage.hostName))
           messages.push(...autoSlice(message));
         }
 
@@ -196,6 +180,7 @@ const init_listener = async () => {
 
     const data = event.payload as Object[]
     data.forEach(async (item: any) => {
+
       const { uname, message, isEmoji, uid, emoji } = item.barrage;
       message && !isEmoji && msgList.value.push({ uname, message });
       isEmoji && emojiPopList.value.push(emoji);
@@ -208,11 +193,19 @@ const init_listener = async () => {
       if (message && uid !== parseInt(await getStore(LOGIN_INFO.uid))) {
         if (message.includes(`@${manage.robotName}`)) {
           const question = message.replace(`@${manage.robotName}`, "").trim();
-          if (question.includes("粉丝数") || question.includes("今日目标")) {
-            const { by_room_ids } = await getLiveStatusApi(manage.roomid);
-            const curFans = by_room_ids[manage.roomid].attention;
-            messages.push(...autoSlice(`@${manage.hostName} 当前粉丝数${curFans}，今日已增长${curFans - todayFans}，冲～`));
-            return;
+
+          if (masterList.includes(uid)) {
+            if (question === "直播时间") {
+              messages.push(`@${manage.hostName}今日直播时长 ${liveTime}分钟`);
+              return;
+            }
+
+            if (question.includes("粉丝数") || question.includes("今日目标")) {
+              const { by_room_ids } = await getLiveStatusApi(manage.roomid);
+              const curFans = by_room_ids[manage.roomid].attention;
+              messages.push(...autoSlice(`@${manage.hostName} 当前粉丝数${curFans}，今日已增长${curFans - todayFans}，冲～`));
+              return;
+            }
           }
           // 主人命令
           if (uid === 405579368) {
@@ -240,7 +233,7 @@ const init_listener = async () => {
       if (item.barrageType === "like") {
         // 点赞事件
         if (!manage.like) return;
-        const message = manage.likeText.replaceAll('{user}', formatUname(item.uname)).replaceAll('{up}', manage.hostName);
+        const message = manage.likeText.replaceAll('{user}', formatUname(item.barrage.uname)).replaceAll('{up}', manage.hostName);
         messages.push(...autoSlice(message));
       } else {
         !isEmoji && create_danmu_sql({ ...item, roomid: manage.roomid });
@@ -326,8 +319,8 @@ watch(active, async (value) => {
       }
     }, 1000 * 3);
   } else {
-    // 计算今日直播时间，增长粉丝数量
-    messages.push(`@${manage.hostName}今日直播时长 ${liveTime}分钟`);
+    // 计算今日直播时间
+    messages.push(`@${manage.hostName}今日直播时长${liveTime}分钟`);
     messages.push(offline);
     clearInterval(clockInterval);
   }

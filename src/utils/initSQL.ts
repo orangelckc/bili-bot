@@ -109,6 +109,8 @@ const sign_sql = async (data: any) => {
 };
 
 const formatUname = (uname: string) => {
+  if(!uname) return ""
+  
   return uname.length > 6 ? uname.slice(0, 6) + "..." : uname;
 };
 

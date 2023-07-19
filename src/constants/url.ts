@@ -18,7 +18,7 @@ const ROOM_INFO_URL =
   "https://link.bilibili.com/p/center/index#/my-room/start-live";
 
 // 直播长链接地址
-const WEBSOCKET_URL = "ws://broadcastlv.chat.bilibili.com:2244/sub";
+const WEBSOCKET_URL = "wss://broadcastlv.chat.bilibili.com/sub";
 
 export {
   BASE_URL_PREFIX,

@@ -12,20 +12,21 @@ import { initSQL } from '@/utils/initSQL';
 // 用户信息
 const userInfo = reactive({
   avatar: '',
-  uname: '',
+  uname: '未登录',
   uid: await getStore(LOGIN_INFO.uid),
 });
 
 const getUserInfo = async () => {
   const result = await getUserInfoApi();
+
   if (!result) {
     // getUserInfo();
     return;
   }
 
-  const { name, face } = result;
+  const { uname, face } = result;
   userInfo.avatar = face;
-  userInfo.uname = name;
+  userInfo.uname = uname;
 };
 
 const logout = () => {
@@ -51,7 +52,8 @@ onMounted(() => {
     <q-header elevated>
       <q-toolbar>
         <q-avatar>
-          <q-img :src="userInfo.avatar" spinner-color="white" />
+          <q-img :src="userInfo.avatar" spinner-color="white" v-if="userInfo.avatar"/>
+          <span class="i-carbon-user-avatar-filled-alt h-10 w-10" v-else></span>
         </q-avatar>
         <q-toolbar-title data-tauri-drag-region class="hover:cursor-move">
           {{ userInfo.uname }}
