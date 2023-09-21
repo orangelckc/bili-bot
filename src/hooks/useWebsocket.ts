@@ -10,10 +10,13 @@ import {
   SUPER_CHAT_EVENT,
   OPEN_WEBSOCKET_EVENT,
   CLOSE_WEBSOCKET_EVENT,
-  CONNECT_SUCCESS_EVENT
+  CONNECT_SUCCESS_EVENT,
+  LOGIN_INFO
 } from "@/constants";
 import handleMessage from "@/utils/message";
 import type { SetInterval } from "@/types";
+import { getStore } from "@/store";
+import { getLiveTokenApi } from "@/api";
 
 let websocket: WebSocket;
 let timer: SetInterval | null;
@@ -48,14 +51,23 @@ const useWebsocket = () => {
   };
 
   // 发送连接信息
-  const onConnect = (roomid: number) => {
+  const onConnect = async (roomid: number) => {
+    // 连接前获取key
+    const { token } = await getLiveTokenApi(`${roomid}`)
+
+    const authData = {
+      uid: +await getStore(LOGIN_INFO.uid),
+      roomid,
+      protover: 2,
+      clientver: "1.14.3",
+      type: 2,
+      platform: "web",
+      key: token,
+    };
+
     websocket.send(
       encode(
-        JSON.stringify({
-          protover: 1,
-          clientver: "1.4.0",
-          roomid
-        }),
+        JSON.stringify(authData),
         7
       )
     );
@@ -107,8 +119,9 @@ const useWebsocket = () => {
   };
 
   const trigger = async () => {
-    await listen<string>(OPEN_WEBSOCKET_EVENT, (event) => {
+    await listen<string>(OPEN_WEBSOCKET_EVENT, async (event) => {
       const { roomid } = event.payload as any;
+
       openWebsocket(parseInt(roomid));
     });
     await listen(CLOSE_WEBSOCKET_EVENT, closeWebsocket);

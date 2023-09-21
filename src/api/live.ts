@@ -37,6 +37,20 @@ const getLiveCodeApi = async () =>
     }
   );
 
+// 获取ws认证token
+const getLiveTokenApi = async (roomid: string) =>
+   await getQueryData(
+    `${LIVE_URL_PREFIX}/xlive/web-room/v1/index/getDanmuInfo`,
+    {
+      query: {
+        id: roomid,
+      },
+      headers:{
+        cookie: await getStore(LOGIN_INFO.cookie)
+      },
+      hideLoadingBar: true
+    }
+  );
 
 // 获取礼物列表
 const getGiftApi = async () => {
@@ -164,5 +178,6 @@ export {
   sendMessageApi,
   getLiveFlvUrlApi,
   getLiveM3U8UrlApi,
-  getMyFollowLiveInfo
+  getMyFollowLiveInfo,
+  getLiveTokenApi
 };

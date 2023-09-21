@@ -60,6 +60,7 @@ const offline = `${manage.robotName}要下线了，感谢大家的陪伴～`;
 
 const welcome = [
   `欢迎新朋友们来到${manage.hostName}的直播间～`,
+  `${manage.hostName}有才有德，有点帅，快来关注他吧～`,
   "发发弹幕，可以触发直播间好玩的互动功能哟～"
 ];
 
@@ -69,15 +70,33 @@ const intro = [
 ];
 
 const bossList = [
-    {
+  // {
+  //   uid: "349931835",
+  //   uname: "纯鱼子酱",
+  //   nickname: "小王同学",
+  //   text: ",？"
+  // },
+  {
+    uid: "677100107",
+    uname: "犷吉",
+    nickname: "犷吉姐姐",
+    text: ",有没有给闹闹带糖啊？"
+  },
+  {
     uid: "409672400",
     uname: "cryingwatermelon",
     nickname: "西瓜姐姐",
-    text: ", 快来夸夸闹闹吧～"
+    text: ",快来夸夸闹闹吧～"
   },
+  {
+    uid: "79589619",
+    uname: "小co_hegk",
+    nickname: "",
+    text: "夸夸团上线啦，@{up}不要摸鱼啦～"
+  }
 ];
 
-const masterList = [405579368 ]
+const masterList = [405579368, 8212729]
 
 const autoSlice = (str: string) => {
   const arr: string[] = [];
