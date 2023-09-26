@@ -44,8 +44,7 @@ const validateLoginInfoApi = async () =>
 
 // 获取用户信息
 const getUserInfoApi = async () =>
-  await getQueryData(`${BASE_URL_PREFIX}/nav`, {
-    query: { mid: (await getStore(LOGIN_INFO.uid)) },
+  await getQueryData(`${BASE_URL_PREFIX}/x/web-interface/nav`, {
     headers: {
       cookie: await getStore(LOGIN_INFO.cookie)
     },

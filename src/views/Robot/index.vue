@@ -52,7 +52,7 @@ onMounted(() => {
     <q-header elevated>
       <q-toolbar>
         <q-avatar>
-          <q-img :src="userInfo.avatar" spinner-color="white" v-if="userInfo.avatar"/>
+          <q-img :src="userInfo.avatar" spinner-color="white" v-if="userInfo.avatar" />
           <span class="i-carbon-user-avatar-filled-alt h-10 w-10" v-else></span>
         </q-avatar>
         <q-toolbar-title data-tauri-drag-region class="hover:cursor-move">
