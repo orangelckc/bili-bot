@@ -150,6 +150,10 @@ const getLiveM3U8UrlApi = async (qn: string = "0", roomid: string) =>
       format: "0,1,2",
       codec: "0,1",
       room_id: roomid
+    },
+    headers:{
+      cookie: await getStore(LOGIN_INFO.cookie),
+      csrf: await getStore(LOGIN_INFO.csrf)
     }
   })
 
