@@ -7,6 +7,13 @@ import { getLoginUrlApi, verifyQrCodeApi } from "@/api";
 import { LOGIN_INFO } from "@/constants";
 import { setStore } from "@/store";
 
+const enum EQRCodeState {
+  '成功登陆' = 0,
+  '已失效' = 86038,
+  '未扫码' = 86101,
+  '已扫码未确认' = 86090,
+}
+
 // 二维码图片
 const qrCodeImage = ref<string>();
 
@@ -25,45 +32,37 @@ const getQRCode = async () => {
     return;
   }
 
-  const { oauthKey, url } = result;
+  const { qrcode_key, url } = result;
   qrCodeImage.value = await QRCode.toDataURL(url);
-  verifyQrCode(oauthKey);
+  verifyQrCode(qrcode_key);
 };
 
 // 验证扫码信息
-const verifyQrCode = async (oauthKey: string) => {
-  const result = await verifyQrCodeApi(oauthKey);
+const verifyQrCode = async (qrcode_key: string) => {
+  const result = await verifyQrCodeApi(qrcode_key);
 
   if (!result) {
-    setTimeout(() => verifyQrCode(oauthKey), 1000 * 3);
+    setTimeout(() => verifyQrCode(qrcode_key), 1000 * 3);
 
     return;
   }
 
-  switch (result) {
-    // 二维码已过期
-    case -2:
-      qrCodeStatus.value = 2;
-      break;
+  switch (result.code) {
+    case EQRCodeState.已失效:
+      getQRCode()
+      break
 
-    // 未扫码
-    case -4:
-      setTimeout(() => verifyQrCode(oauthKey), 1000 * 3);
-      break;
+    case EQRCodeState.未扫码:
+      setTimeout(() => verifyQrCode(qrcode_key), 1000 * 3)
+      break
 
-    // 已扫码,之后再次请求获取登录信息
-    case -5:
-      qrCodeStatus.value = 1;
+    case EQRCodeState.已扫码未确认:
+      setTimeout(() => verifyQrCode(qrcode_key), 1000 * 3)
+      break
 
-      setTimeout(() => verifyQrCode(oauthKey), 1000 * 3);
-      break;
-
-    // 扫码并登录
-    default:
-      qrCodeStatus.value = 3;
-
-      saveLoginInfo(result.url);
-      break;
+    case EQRCodeState.成功登陆:
+      saveLoginInfo(result.url)
+      break
   }
 };
 
@@ -74,7 +73,6 @@ const saveLoginInfo = async (data: string) => {
   await setStore(LOGIN_INFO.uid, DedeUserID!.toString());
   await setStore(LOGIN_INFO.cookie, `SESSDATA=${SESSDATA}`);
   await setStore(LOGIN_INFO.csrf, bili_jct!.toString());
-
   window.location.reload();
 };
 

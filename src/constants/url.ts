@@ -2,7 +2,7 @@
 const BASE_URL_PREFIX = "https://api.bilibili.com";
 
 // 小破站登录 api 前缀
-const LOGIN_URL_PREFIX = "https://passport.bilibili.com";
+const LOGIN_URL_PREFIX = "https://passport.bilibili.com/x/passport-login/web";
 
 // 小破站直播 api 前缀
 const LIVE_URL_PREFIX = "https://api.live.bilibili.com";

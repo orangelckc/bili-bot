@@ -6,18 +6,14 @@ import { isLogin } from "@/utils/auth";
 
 // 获取登录url
 const getLoginUrlApi = async () =>
-  await getQueryData(`${LOGIN_URL_PREFIX}/qrcode/getLoginUrl`, {
+  await getQueryData(`${LOGIN_URL_PREFIX}/qrcode/generate`, {
     returnError: true
   });
 
 // 验证二维码是否被扫描
-const verifyQrCodeApi = async (oauthKey: string) =>
-  await getQueryData(`${LOGIN_URL_PREFIX}/qrcode/getLoginInfo`, {
-    method: "POST",
-    body: Body.form({
-      oauthKey,
-      gourl: "https://www.bilibili.com/"
-    }),
+const verifyQrCodeApi = async (qrcode_key: string) =>
+  await getQueryData(`${LOGIN_URL_PREFIX}/qrcode/poll`, {
+    query: { qrcode_key },
     returnError: true
   });
 
