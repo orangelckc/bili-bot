@@ -43,13 +43,17 @@ const initPlayer = () => {
       {
         enableWorker: false, // 不启用拆散线程
         enableStashBuffer: false, // 敞开IO暗藏缓冲区
-        reuseRedirectedURL: true, // 重用301/302重定向url，用于随后的申请，如查找、重新连接等。
+        reuseRedirectedURL: false, // 重用301/302重定向url，用于随后的申请，如查找、重新连接等。
         autoCleanupSourceBuffer: true // 主动清除缓存
       }
     );
     flvPlayer.attachMediaElement(videoRef.value);
     flvPlayer.load();
     flvPlayer.play();
+
+    flvPlayer.on(flvjs.Events.METADATA_ARRIVED, (data: any) => {
+      console.log('视频流加载成功',data)
+    });
 
     flvPlayer.on(flvjs.Events.LOADING_COMPLETE, (data: any) => {
       message("视频流停止");
@@ -117,9 +121,9 @@ watchEffect(async () => {
   await destroyPlayer();
 
   curStreamIndex = 0;
-  curStream.value = props.streams[curStreamIndex];
-  // 优先m3u8
-  // curStream.value = props.streams.find(item => item.type === 'm3u8');
+  // 优先flv,m3u8有地域限制
+  curStream.value = props.streams.find(item => item.type === 'flv') ||  props.streams[curStreamIndex];
+  console.log('curStream.value',curStream.value)
 })
 
 const switchPlay = () => {
@@ -136,14 +140,13 @@ const switchPlay = () => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full items-center justify-center bg-gray/30" @wheel="changeVolume">
-    <video ref="videoRef" :volume="volume" controls />
+  <div class="flex flex-col min-h-320px items-center justify-center bg-gray/30 " @wheel="changeVolume">
+    <video ref="videoRef" :volume="volume" controls class="inset-0 w-full h-full object-cover"/>
     <div class="flex justify-around items-center gap-4">
       <div :class="audioMode ? 'i-carbon-video-filled' : 'i-carbon-headphones'"
         class="text-5xl text-white hover:cursor-pointer" @click="switchAudioMode" />
       <div :class="isPlaying ? 'i-carbon-stop-outline' : 'i-carbon-play-filled'"
         class="text-4xl text-white hover:cursor-pointer" @click="switchPlay" />
-
     </div>
   </div>
 </template>
